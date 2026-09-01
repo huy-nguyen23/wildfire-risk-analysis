@@ -1,0 +1,11 @@
+.env
+*.key
+data/raw/*
+data/processed/*
+
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+env/
