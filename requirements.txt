@@ -3,3 +3,8 @@ requests
 python-dotenv
 matplotlib 
 jupyter
+
+cdsapi
+xarray
+netCDF4
+h5netcdf
