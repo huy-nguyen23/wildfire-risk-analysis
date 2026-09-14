@@ -5,12 +5,21 @@ import io
 
 TIMEOUT=60         
 
-def check_map_key(verbose=True):
+def check_map_key(verbose=True): 
+    """Report how many API transactions the current MAP_KEY has used.
+
+    Args:
+        verbose: print a human-readable summary.
+
+    Returns:
+        dict with 'current_transactions', 'transaction_limit' and
+        'transaction_interval', or None if the request failed.
+    """
     url=f"{FIRMS_BASE}/mapserver/mapkey_status/?MAP_KEY={MAP_KEY}"
-    try:
+    try: 
         response=requests.get(url)
         response.raise_for_status()
-        data=response.json()
+        data=response.json()        
     except requests.exceptions.RequestException as e:
         print(f"[NETWORK ERROR] Could not reach FIRMS: {e}")
         return None
@@ -18,7 +27,7 @@ def check_map_key(verbose=True):
         print("[ERROR] Response was not JSON. Check MAP_KEY in your .env file.")
         return None
     
-    if verbose:
+    if verbose: 
         used=data.get("current_transactions","?")
         limit=data.get("transaction_limit","?")
         interval=data.get("transaction_interval","?")
@@ -27,6 +36,16 @@ def check_map_key(verbose=True):
     return data
 
 def get_data_availability(sensor="ALL"):
+    """List every FIRMS dataset together with its available date range.
+
+    Args:
+        sensor: 'all' for every dataset, or a single dataset id such as
+                'VIIRS_SNPP_SP'.
+
+    Returns:
+        DataFrame with columns data_id, min_date, max_date (dates parsed to
+        datetime so they can be compared), or None if the request failed.
+    """
     url=f"{FIRMS_BASE}/api/data_availability/csv/{MAP_KEY}/{sensor}"
     try:
         response=requests.get(url)
@@ -45,6 +64,20 @@ def get_data_availability(sensor="ALL"):
     return df
 
 def pick_sources_covering(start,end,availability=None):
+    """Return only the datasets whose date range fully covers [start, end].
+
+    This answers the central question of Exercise 2: which datasets are usable
+    for a 2020-2025 study? The answer comes from the data rather than a guess.
+
+    Args:
+        start: first day of the study period, 'YYYY-MM-DD'.
+        end: last day of the study period, 'YYYY-MM-DD'.
+        availability: a DataFrame from get_data_availability(); fetched
+            automatically when omitted.
+
+    Returns:
+        DataFrame with columns data_id, min_date, max_date.
+    """
     if availability is None:
         availability=get_data_availability()
     
@@ -55,6 +88,16 @@ def pick_sources_covering(start,end,availability=None):
     return availability.loc[covers].reset_index(drop=True)
 
 def _validate_bbox(bbox):
+    """Validate a 'west,south,east,north' bounding box string.
+
+    Returns:
+        tuple of four floats (west, south, east, north).
+
+    Raises:
+        ValueError: if the string is malformed, out of range, or in the wrong
+            order. Swapping the corners is the most common mistake because the
+            FIRMS order differs from the more familiar north/south/east/west.
+    """
     parts=str(bbox).split(",")
     if len(parts)!=4:
         raise ValueError(f"Bounding box needs exactly 4 numbers 'west,south,east,north'. Got: {bbox!r}")
@@ -80,11 +123,37 @@ def _validate_day_range(day_range):
         )
 
 def _cache_path(source,region,day_range,date):
+    """Build a deterministic filename so one query always maps to one file.
+
+    Commas become underscores and minus signs become 'm' so the name stays
+    valid on every operating system.
+    """
     safe_region=str(region).replace(",","_").replace("-","m")
     date_part=date if date else "latest"
     return RAW_DIR / f"{source}_{safe_region}_{date_part}_{day_range}d.csv"
 
 def download_firms(source,bbox,day_range=1,date=None,use_cache=True,verbose=True):
+    """Download FIRMS hotspots for a bounding box, with caching and error handling.
+
+    This is the production downloader for the project and is reused from
+    Session 6 onwards.
+
+    Args:
+        source: dataset id, e.g. 'VIIRS_SNPP_SP' or 'MODIS_SP'.
+        bbox: 'west,south,east,north'.
+        day_range: number of days per request (1-5).
+        date: 'YYYY-MM-DD'; omit for the most recent data.
+        use_cache: read a previously downloaded file instead of calling the API.
+        verbose: print progress messages.
+
+    Returns:
+        DataFrame of hotspot detections, or None if the download failed.
+
+    Raises:
+        ValueError: if bbox or day_range are invalid. These are raised rather
+            than returned because they are programming mistakes, not runtime
+            conditions, and should be fixed rather than handled.
+    """
     _validate_bbox(bbox)
     _validate_day_range(day_range)
 
