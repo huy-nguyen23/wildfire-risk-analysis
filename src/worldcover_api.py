@@ -40,6 +40,18 @@ def tiles_for_bbox(west,south,east,north,tile_size=TILE_SIZE):
     return sorted(tiles)
 
 def tile_url(tile_name,year=DEFAULT_YEAR):
+    """Build the public HTTPS URL for one WorldCover tile.
+
+    Args:
+        tile_name: e.g. 'N15E096'.
+        year: 2020 or 2021.
+
+    Returns:
+        Full HTTPS URL string.
+
+    Raises:
+        ValueError: if year is not a supported WorldCover release.
+    """
     if year not in WORLDCOVER_VERSION:
         raise ValueError(f"year must be one of {sorted(WORLDCOVER_VERSION)}, got {year}")
     version=WORLDCOVER_VERSION[year]
@@ -47,6 +59,21 @@ def tile_url(tile_name,year=DEFAULT_YEAR):
     return f"{WORLDCOVER_URL}/{version}/{year}/map/{filename}"
 
 def open_tile(tile_name,year=DEFAULT_YEAR):
+    """Open a remote WorldCover tile with rasterio, without downloading it.
+
+    Thanks to the Cloud-Optimized GeoTIFF format, opening a dataset only
+    reads a small amount of metadata over the network - the pixel data is
+    fetched later, and only for the region actually requested (see
+    read_window()).
+
+    Args:
+        tile_name: e.g. 'N15E096'.
+        year: 2020 or 2021.
+
+    Returns:
+        An open rasterio dataset. Caller is responsible for closing it
+        (use a `with` block, or call .close()).
+    """
     return rasterio.open(tile_url(tile_name,year))
 
 def _decimated_shape(width_px,height_px,max_pixels):
@@ -56,30 +83,78 @@ def _decimated_shape(width_px,height_px,max_pixels):
     scale=math.sqrt(native_pixels/max_pixels)
     return (max(1,int(height_px/scale)),max(1,int(width_px/scale)) )
 
+def rasterio_scale(x_scale, y_scale):
+    """Return an affine scaling transform (thin wrapper for readability)."""
+    from affine import Affine
+
+    return Affine.scale(x_scale, y_scale)
+
 def read_window(tile_name,bbox,year=DEFAULT_YEAR,max_pixels=20000000):
+    """Read just the pixels of one tile that fall inside a bounding box.
+
+    Args:
+        tile_name: e.g. 'N15E096'.
+        bbox: (west, south, east, north) in degrees.
+        year: 2020 or 2021.
+        max_pixels: safety cap on the output array size (default ~20 million,
+            about 20MB as uint8). If the native-resolution window would
+            exceed this, the read is automatically downsampled - using
+            nearest-neighbour resampling, since this is CATEGORICAL data:
+            averaging class code 10 (tree cover) with 80 (water) would
+            produce 45, a code that names no real class. Pass None to force
+            full native ~10m resolution (only for genuinely small areas).
+
+    Returns:
+        (data, transform): a 2D numpy array of class codes, and the affine
+        transform mapping its pixel (row, col) indices to real coordinates.
+    """
     from rasterio.enums import Resampling
-     
-    west,south,east,north=bbox
-    with open_tile(tile_name,year) as src :
-        window=src.window(west,south,east,north)
-        
-        out_shape=None
+    from rasterio.windows import Window
+
+    west, south, east, north = bbox
+
+    with open_tile(tile_name, year) as src:
+        window = src.window(west, south, east, north)
+
+        window = window.intersection(Window(0, 0, src.width, src.height))
+
+        out_shape = None
         if max_pixels is not None:
-            out_shape=_decimated_shape(window.width,window.height,max_pixels)
-        
+            out_shape = _decimated_shape(window.width, window.height, max_pixels)
+
         if out_shape:
-            data=src.read(1,window=window,out_shape=out_shape,resampling=Resampling.nearest)
-            transform=src.window_transform(window)*src.window_transform(window).scale(
-                window.width/out_shape[1],
-                window.height/out_shape[0]
+            data = src.read(1, window=window, out_shape=out_shape, resampling=Resampling.nearest)
+            transform = src.window_transform(window) * rasterio_scale(
+                window.width / out_shape[1], window.height / out_shape[0]
             )
         else:
-            data=src.read(1,window=window)
-            transform=src.window_transform(window)
-    
-    return data,transform
+            data = src.read(1, window=window)
+            transform = src.window_transform(window)
+
+    return data, transform
 
 def mosaic_tiles(tile_names,bbox,year=DEFAULT_YEAR,max_pixels=20000000):
+    """Merge several tiles into one array, clipped to a bounding box.
+
+    Needed whenever tiles_for_bbox() returns more than one tile - the usual
+    case for any area of interest that happens to straddle the fixed 3x3
+    degree grid, exactly as it does for this project's Chiang Mai test box.
+
+    Args:
+        tile_names: list of tile name strings, e.g. from tiles_for_bbox().
+        bbox: (west, south, east, north) in degrees.
+        year: 2020 or 2021.
+        max_pixels: safety cap on the output array size (default ~20 million).
+            See read_window() for why this matters: this project's own
+            Chiang Mai bbox is about 2x3 degrees, which at native ~10m
+            resolution merges to roughly 740 million pixels - large enough
+            to crash a typical laptop's Jupyter kernel outright. Pass None
+            to force full native ~10m resolution.
+
+    Returns:
+        (mosaic, transform): a single 2D numpy array covering the full bbox,
+        and its affine transform.
+    """
     west,south,east,north=bbox
     datasets=[open_tile(t,year) for t in tile_names]
     
@@ -129,6 +204,31 @@ def _cache_path(bbox, year):
     return RAW_DIR / f"worldcover_{year}_{safe_bbox}.tif"
 
 def download_worldcover(bbox,year=DEFAULT_YEAR,use_cache=True,verbose=True,max_pixels=20000000):
+    """Download and mosaic every WorldCover tile covering a bounding box.
+
+    This is the production entry point for the project, reused from later
+    sessions onward - the same role download_firms() and download_era5()
+    play for their sources.
+
+    Args:
+        bbox: (west, south, east, north) in degrees.
+        year: 2020 or 2021.
+        use_cache: read a previously saved mosaic instead of re-downloading.
+        verbose: print progress messages.
+        max_pixels: safety cap on the output array size (default ~20
+            million). See mosaic_tiles() for why this matters - without it,
+            a multi-degree bbox at WorldCover's native ~10m resolution can
+            produce an array large enough to crash the kernel outright. Pass
+            None to force full native ~10m resolution.
+
+    Returns:
+        (data, transform): a 2D numpy array of class codes covering the full
+        bbox, and its affine transform. None if the download failed.
+
+    Raises:
+        ValueError: if bbox or year are invalid - programming mistakes worth
+            catching before any network request, not runtime conditions.
+    """
     west, south, east, north = _validate_bbox(bbox)
     _validate_year(year)
 
