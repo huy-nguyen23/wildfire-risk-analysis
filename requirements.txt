@@ -8,5 +8,9 @@ cdsapi
 xarray
 netCDF4
 h5netcdf
+pyarrow
+geopandas
 
 rasterio
+
+shapely

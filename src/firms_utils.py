@@ -1,5 +1,5 @@
 import pandas as pd 
-from config import LOCAL_TZ_OFFSET_HOURS
+from config import LOCAL_TZ_OFFSET_HOURS,COUNTRY_BBOX_APPROX
 
 def describe_firms(df,name="dataset"):
     print("=" * 64)
@@ -142,3 +142,28 @@ def plot_hotspots(df,title="Hotspot map",out_path=None):
         print(f"Saved figure: {out_path}")
 
     return fig, ax
+
+def firms_bbox_for_countries(countries):
+    """Return one FIRMS acquisition envelope for a set of countries.
+
+    The returned west,south,east,north rectangle is only a download envelope.
+    It is deliberately not used to assign a country to a detection; exact
+    country assignment happens later with the bundled boundary polygons.
+    """
+    normalized = tuple(dict.fromkeys(str(code).upper() for code in countries))
+    if not normalized:
+        raise ValueError("At least one study country is required")
+
+    unknown = sorted(set(normalized) - set(COUNTRY_BBOX_APPROX))
+    if unknown:
+        raise ValueError(
+            f"Unknown country code(s): {unknown}. "
+            f"Known codes: {sorted(COUNTRY_BBOX_APPROX)}"
+        )
+
+    boxes = [COUNTRY_BBOX_APPROX[code] for code in normalized]
+    west = min(box[0] for box in boxes)
+    south = min(box[1] for box in boxes)
+    east = max(box[2] for box in boxes)
+    north = max(box[3] for box in boxes)
+    return ",".join(f"{value:g}" for value in (west, south, east, north))

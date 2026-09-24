@@ -2,6 +2,7 @@
 *.key
 data/raw/*
 data/processed/*
+data/*
 
 __pycache__/
 *.py[cod]
