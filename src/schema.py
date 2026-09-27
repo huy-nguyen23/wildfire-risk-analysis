@@ -267,30 +267,13 @@ def schema_table():
     return pd.DataFrame(rows)
 
 def _snap_index(value, size=GRID_SIZE_DEG):
-    inv = 1.0 / size
-    if float(inv).is_integer():
-        scaled = value * round(inv)   # exact integer multiplier, no drift
-    else:
-        scaled = value / size
-    return math.floor(scaled + 0.5)
+    steps_per_degree = round(1 / size)      # 0.1 -> 10
+    return math.floor(value * steps_per_degree + 0.5)
 
 def latlon_to_grid_id(lat, lon, size=GRID_SIZE_DEG):
-    """Map any coordinate to the id of the grid cell containing it.
+    """Turn any coordinate into the id of its grid cell.
 
-    This is a draft of the spatial join done properly in Session 9; having it
-    here lets Session 5 build and validate sample rows before any real data
-    exists.
-
-    Args:
-        lat, lon: coordinate in degrees.
-        size: grid spacing in degrees (0.1 for ERA5-Land).
-
-    Returns:
-        str id of the form '<lat>_<lon>' naming the cell CENTRE,
-        e.g. (18.52, 99.03) -> '18.5_99.0'.
-
-    Raises:
-        ValueError: if the coordinate is off the globe.
+    Example: (18.52, 99.03) -> "18.5_99.0"   (the centre of the cell)
     """
     if not (-90 <= lat <= 90):
         raise ValueError(f"latitude must be between -90 and 90, got {lat}")
@@ -303,18 +286,7 @@ def latlon_to_grid_id(lat, lon, size=GRID_SIZE_DEG):
 
 
 def grid_id_to_latlon(grid_id):
-    """Recover the cell centre coordinate from a grid id.
-
-    The inverse of latlon_to_grid_id(). Being able to go both ways is what
-    makes the id safe to use as a key: nothing is lost by storing the id
-    instead of the pair of numbers.
-
-    Args:
-        grid_id: e.g. '18.5_99.0'.
-
-    Returns:
-        (latitude, longitude) floats.
-    """
+    """The opposite of latlon_to_grid_id(): "18.5_99.0" -> (18.5, 99.0)."""
     try:
         lat_str, lon_str = grid_id.split("_")
         return float(lat_str), float(lon_str)
@@ -334,88 +306,92 @@ def empty_dataframe():
     })
     
 def validate_schema(df, strict=False, verbose=True):
-    """Check a DataFrame against SCHEMA and report every problem found.
+    """Check a table against SCHEMA and list EVERY problem found.
 
-    Deliberately reports ALL problems rather than raising on the first one:
-    when a pipeline produces a bad table, seeing the full list at once is far
-    more useful than fixing and re-running seven times.
-
-    Args:
-        df: the table to check.
-        strict: if True, also complain about columns not in SCHEMA.
-        verbose: print a readable report.
-
-    Returns:
-        list of problem strings - empty means the table is valid.
+    It does not stop at the first problem: seeing the whole list at once
+    is faster than fixing one thing and running it again seven times.
+    Returns a list of problems (empty list = the table is fine).
     """
     problems = []
 
-    # --- missing / unexpected columns ---
-    missing = [c for c in SCHEMA if c not in df.columns]
-    if missing:
+    # 1. Missing columns
+    missing = []
+    for column in SCHEMA:
+        if column not in df.columns:
+            missing.append(column)
+    if len(missing) > 0:
         problems.append(f"Missing columns: {missing}")
 
+    # 2. Extra columns (only if strict=True)
     if strict:
-        extra = [c for c in df.columns if c not in SCHEMA]
-        if extra:
+        extra = []
+        for column in df.columns:
+            if column not in SCHEMA:
+                extra.append(column)
+        if len(extra) > 0:
             problems.append(f"Unexpected columns not in SCHEMA: {extra}")
 
-    # --- dtypes ---
-    for col, spec in SCHEMA.items():
-        if col not in df.columns:
+    # 3. Column types
+    for column in SCHEMA:
+        if column not in df.columns:
             continue
-        actual = str(df[col].dtype)
-        expected = spec["dtype"]
-        # pandas 3 stores text as 'str'; pandas 2 used 'object'. Accept both
-        # so this check does not fail purely because of a library version.
-        if expected == "object" and actual in ("object", "str", "string"):
+        actual = str(df[column].dtype)
+        expected = SCHEMA[column]["dtype"]
+
+        # Different pandas versions name text and date types differently.
+        # I accept all of them so the check does not fail because of a version.
+        if expected == "object" and actual in ["object", "str", "string"]:
             continue
-        # Likewise, pandas 2 defaults datetimes to nanosecond precision and
-        # pandas 3 to microsecond. Any datetime64 resolution is fine here -
-        # the project never needs sub-second precision.
         if expected.startswith("datetime64") and actual.startswith("datetime64"):
             continue
         if actual != expected:
-            problems.append(f"Column '{col}': dtype is {actual}, expected {expected}")
+            problems.append(f"Column '{column}': dtype is {actual}, expected {expected}")
 
-    # --- value ranges ---
-    for col, spec in SCHEMA.items():
-        if col not in df.columns or spec["valid_range"] is None:
+    # 4. Values outside the allowed range
+    for column in SCHEMA:
+        if column not in df.columns:
             continue
-        lo, hi = spec["valid_range"]
-        series = pd.to_numeric(df[col], errors="coerce")
-        if lo is not None:
-            n_bad = int((series < lo).sum())
-            if n_bad:
-                problems.append(f"Column '{col}': {n_bad} value(s) below minimum {lo}")
-        if hi is not None:
-            n_bad = int((series > hi).sum())
-            if n_bad:
-                problems.append(f"Column '{col}': {n_bad} value(s) above maximum {hi}")
+        allowed = SCHEMA[column]["valid_range"]
+        if allowed is None:
+            continue
 
-    # --- nulls in columns that must always be filled ---
-    for col in REQUIRED_NOT_NULL:
-        if col in df.columns:
-            n_null = int(df[col].isna().sum())
-            if n_null:
-                problems.append(f"Column '{col}': {n_null} null value(s), but it is required")
+        lowest, highest = allowed
+        numbers = pd.to_numeric(df[column], errors="coerce")
 
-    # --- land cover percentages should add up ---
-    pct_cols = ["forest_pct", "cropland_pct", "grassland_pct", "other_pct"]
-    if all(c in df.columns for c in pct_cols):
-        total = df[pct_cols].sum(axis=1)
-        # 1 percentage point of slack absorbs ordinary rounding
+        if lowest is not None:
+            n_too_low = int((numbers < lowest).sum())
+            if n_too_low > 0:
+                problems.append(f"Column '{column}': {n_too_low} value(s) below minimum {lowest}")
+        if highest is not None:
+            n_too_high = int((numbers > highest).sum())
+            if n_too_high > 0:
+                problems.append(f"Column '{column}': {n_too_high} value(s) above maximum {highest}")
+
+    # 5. Empty values in columns that must be filled
+    for column in REQUIRED_NOT_NULL:
+        if column in df.columns:
+            n_empty = int(df[column].isna().sum())
+            if n_empty > 0:
+                problems.append(f"Column '{column}': {n_empty} null value(s), but it is required")
+
+    # 6. The 4 land cover percentages must add up to 100
+    percent_columns = ["forest_pct", "cropland_pct", "grassland_pct", "other_pct"]
+    has_all = True
+    for column in percent_columns:
+        if column not in df.columns:
+            has_all = False
+    if has_all:
+        total = df[percent_columns].sum(axis=1)
+        # allow 1 percentage point for rounding
         n_bad = int(((total - 100).abs() > 1.0).sum())
-        if n_bad:
-            problems.append(
-                f"{n_bad} row(s) where the four land-cover percentages do not sum to 100"
-            )
+        if n_bad > 0:
+            problems.append(f"{n_bad} row(s) where the four land-cover percentages do not sum to 100")
 
     if verbose:
-        if problems:
+        if len(problems) > 0:
             print(f"validate_schema: {len(problems)} problem(s) found")
-            for p in problems:
-                print(f"  - {p}")
+            for problem in problems:
+                print(f"  - {problem}")
         else:
             print(f"validate_schema: OK - {len(df)} rows, {len(df.columns)} columns")
 
