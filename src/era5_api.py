@@ -1,6 +1,7 @@
 from config import CDSAPI_KEY,CDSAPI_URL,RAW_DIR,ERA5_DATASET,ERA5_VARIABLES,ALL_HOURS
 import datetime as dt
 import xarray as xr
+import calendar
 
 _cdsapi=None
 
@@ -155,6 +156,56 @@ def download_era5(variables,area,year,month,day,hours=None,use_cache=True,verbos
         client.retrieve(ERA5_DATASET, request, str(cache_file))
     except Exception as err:
         print(_diagnose_cds_error(err))
+        return None
+
+    if verbose:
+        print(f"[downloaded] {cache_file.name}")
+
+    return xr.open_dataset(cache_file)
+
+def download_era5_month(variables,area,year,month,hours=None,use_cache=None,verbose=True,folder=None):
+    variables = _validate_variables(variables)
+    _validate_area(area)
+    _validate_date(year, month, 1)
+    if hours is None:
+        hours = ALL_HOURS
+
+    n_days = calendar.monthrange(int(year), int(month))[1]
+    days = []
+    for d in range(1, n_days + 1):
+        days.append(f"{d:02d}")
+
+    cache_file = _cache_path(variables, area, year, month, f"01to{n_days:02d}", folder)
+    cache_file.parent.mkdir(parents=True, exist_ok=True)
+    if use_cache and cache_file.exists():
+        if verbose:
+            print(f"[cache] Reading {cache_file.name}")
+        return xr.open_dataset(cache_file)
+
+    try:
+        client = _get_client()
+    except RuntimeError as error:
+        print(f"[CONFIG ERROR] {error}")
+        return None
+
+    request = {
+        "variable": variables,
+        "year": [str(year)],
+        "month": [f"{int(month):02d}"],
+        "day": days,
+        "time": hours,
+        "area": list(area),
+        "data_format": "netcdf",
+        "download_format": "unarchived",
+    }
+
+    if verbose:
+        print(f"Sending {year}-{int(month):02d} ({n_days} days) to CDS - this may take a while ...")
+
+    try:
+        client.retrieve(ERA5_DATASET, request, str(cache_file))
+    except Exception as error:
+        print(_diagnose_cds_error(error))
         return None
 
     if verbose:

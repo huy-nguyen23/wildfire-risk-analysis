@@ -16,11 +16,8 @@ if not MAP_KEY:
 DATA_DIR=BASE_DIR / "data"
 RAW_DIR=DATA_DIR / "raw"
 PROCESSED_DIR=DATA_DIR/ "processed"
-FIGURES_DIR=BASE_DIR / "figures" 
-
 DOCS_DIR = BASE_DIR / "docs"
-REFERENCE_DIR = DATA_DIR / "reference"
-COUNTRY_BOUNDARIES_PATH = REFERENCE_DIR / "sea_countries_10m.geojson"
+LOG_DIR = BASE_DIR / "logs"
 
 RAW_SUBDIRS = {
     "firms": RAW_DIR / "firms",
@@ -29,13 +26,7 @@ RAW_SUBDIRS = {
 }
 MANIFEST_PATH = RAW_DIR / "manifest.csv"
 
-RETRY_MAX_ATTEMPTS = 3
-RETRY_BASE_DELAY_S = 1.0
-
-LOG_DIR = BASE_DIR / "logs"
-LOG_DIR.mkdir(parents=True, exist_ok=True)
-
-for folder in (DATA_DIR,RAW_DIR,PROCESSED_DIR,FIGURES_DIR,REFERENCE_DIR):
+for folder in (DATA_DIR,RAW_DIR,PROCESSED_DIR,DOCS_DIR,LOG_DIR):
     folder.mkdir(parents=True,exist_ok=True)
     
 FIRMS_BASE="https://firms.modaps.eosdis.nasa.gov"
@@ -142,3 +133,9 @@ VIIRS_CONFIDENCE_MAP = {"l": "low", "n": "nominal", "h": "high"}
 DRY_DAY_THRESHOLD_MM = 1.0
 
 RAINFALL_WINDOW_DAYS = 7
+
+RETRY_MAX_ATTEMPTS = 3  
+RETRY_BASE_DELAY_S = 1.0
+
+BOUNDARIES_URL = "https://naciscdn.org/naturalearth/50m/cultural/ne_50m_admin_0_countries.zip"
+BOUNDARIES_PATH = RAW_DIR / "boundaries" / "ne_50m_admin_0_countries.zip"
