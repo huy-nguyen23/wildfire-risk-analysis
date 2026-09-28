@@ -18,6 +18,7 @@ RAW_DIR=DATA_DIR / "raw"
 PROCESSED_DIR=DATA_DIR/ "processed"
 DOCS_DIR = BASE_DIR / "docs"
 LOG_DIR = BASE_DIR / "logs"
+FIGURES_DIR=BASE_DIR/ "figures"
 
 RAW_SUBDIRS = {
     "firms": RAW_DIR / "firms",

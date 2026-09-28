@@ -2,7 +2,7 @@ from config import TILE_SIZE,DEFAULT_YEAR,WORLDCOVER_VERSION,WORLDCOVER_URL,RAW_
 from rasterio.merge import merge 
 import math
 import rasterio
-
+from pathlib import Path
 
 def _tile_name(latitude,longitude,tile_size=TILE_SIZE):
     tile_lat = math.floor(latitude / tile_size) * tile_size
@@ -199,11 +199,16 @@ def _validate_year(year):
         raise ValueError(f"year must be one of {sorted(WORLDCOVER_VERSION)}, got {year}")
 
 
-def _cache_path(bbox, year):
-    safe_bbox = "_".join(str(round(x, 3)) for x in bbox).replace(".", "p").replace("-", "m")
-    return RAW_DIR / f"worldcover_{year}_{safe_bbox}.tif"
+def _cache_path(bbox, year,folder=None):
+    if folder is None:
+        folder = RAW_DIR
+    texts = []
+    for value in bbox:
+        texts.append(str(round(value, 3)))
+    safe_bbox = "_".join(texts).replace(".", "p").replace("-", "m")
+    return Path(folder) / f"worldcover_{year}_{safe_bbox}.tif"
 
-def download_worldcover(bbox,year=DEFAULT_YEAR,use_cache=True,verbose=True,max_pixels=20000000):
+def download_worldcover(bbox,year=DEFAULT_YEAR,use_cache=True,verbose=True,max_pixels=20000000,folder=None):
     """Download and mosaic every WorldCover tile covering a bounding box.
 
     This is the production entry point for the project, reused from later
@@ -232,7 +237,7 @@ def download_worldcover(bbox,year=DEFAULT_YEAR,use_cache=True,verbose=True,max_p
     west, south, east, north = _validate_bbox(bbox)
     _validate_year(year)
 
-    cache_file = _cache_path(bbox, year)
+    cache_file = _cache_path(bbox, year,folder)
     if use_cache and cache_file.exists():
         if verbose:
             print(f"[cache] Reading {cache_file.name}")

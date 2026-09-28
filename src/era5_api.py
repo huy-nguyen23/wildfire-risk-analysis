@@ -2,15 +2,10 @@ from config import CDSAPI_KEY,CDSAPI_URL,RAW_DIR,ERA5_DATASET,ERA5_VARIABLES,ALL
 import datetime as dt
 import xarray as xr
 import calendar
-
-_cdsapi=None
+from pathlib import Path
 
 def _get_client():
-    global _cdsapi
-    if _cdsapi is None:
-        import cdsapi as _cdsapi_module
-        _cdsapi = _cdsapi_module
-
+    import cdsapi
     if not CDSAPI_KEY:
         raise RuntimeError(
             "CDSAPI_KEY not found.\n"
@@ -19,7 +14,7 @@ def _get_client():
             "  3. Add CDSAPI_KEY=<token> to your .env file"
         )
 
-    return _cdsapi.Client(url=CDSAPI_URL, key=CDSAPI_KEY, quiet=True)
+    return cdsapi.Client(url=CDSAPI_URL, key=CDSAPI_KEY, quiet=True)
 
 def _diagnose_cds_error(err):
     msg = str(err).lower()
@@ -111,21 +106,26 @@ def _validate_area(area):
 
     return north, west, south, east
     
-def _cache_path(variables, area, year, month, day):
+def _cache_path(variables, area, year, month, day,folder=None):
     """Build a deterministic filename so one query always maps to one file."""
+    if folder is None:
+        folder=RAW_DIR
     var_part = "_".join(sorted(variables))
     area_part = "_".join(str(round(x, 2)) for x in area).replace(".", "p").replace("-", "m")
-    return RAW_DIR / f"era5land_{var_part}_{area_part}_{year}{month:02d}{day:02d}.nc"
+    if isinstance(day, int):
+        day_part = f"{day:02d}"
+    else:
+        day_part = str(day)
+    return Path(folder) / f"era5land_{var_part}_{area_part}_{year}{int(month):02d}{day_part}.nc"
 
 
-
-def download_era5(variables,area,year,month,day,hours=None,use_cache=True,verbose=True):
+def download_era5(variables,area,year,month,day,hours=None,use_cache=True,verbose=True,folder=None):
     variables=_validate_variables(variables)
     _validate_area(area)
     _validate_date(year,month,day)
     hours=hours or ALL_HOURS
     
-    cache_file = _cache_path(variables, area, year, month, day)
+    cache_file = _cache_path(variables, area, year, month, day,folder)
     if use_cache and cache_file.exists():
         if verbose:
             print(f"[cache] Reading {cache_file.name}")

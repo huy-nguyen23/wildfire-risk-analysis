@@ -1,4 +1,5 @@
 from config import FIRMS_BASE,MAP_KEY,MAX_DAY_RANGE, RAW_DIR
+from pathlib import Path
 import requests
 import pandas as pd
 import io
@@ -122,17 +123,19 @@ def _validate_day_range(day_range):
             f"day_range must be between 1 and {MAX_DAY_RANGE}, got {day_range}"
         )
 
-def _cache_path(source,region,day_range,date):
+def _cache_path(source,region,day_range,date,folder=None):
     """Build a deterministic filename so one query always maps to one file.
 
     Commas become underscores and minus signs become 'm' so the name stays
     valid on every operating system.
     """
+    if folder is None:
+        folder=RAW_DIR
     safe_region=str(region).replace(",","_").replace("-","m")
     date_part=date if date else "latest"
-    return RAW_DIR / f"{source}_{safe_region}_{date_part}_{day_range}d.csv"
+    return Path(folder) / f"{source}_{safe_region}_{date_part}_{day_range}d.csv"
 
-def download_firms(source,bbox,day_range=1,date=None,use_cache=True,verbose=True):
+def download_firms(source,bbox,day_range=1,date=None,use_cache=True,verbose=True,folder=None):
     """Download FIRMS hotspots for a bounding box, with caching and error handling.
 
     This is the production downloader for the project and is reused from
@@ -157,7 +160,8 @@ def download_firms(source,bbox,day_range=1,date=None,use_cache=True,verbose=True
     _validate_bbox(bbox)
     _validate_day_range(day_range)
 
-    cache_file=_cache_path(source,bbox,day_range,date)
+    cache_file=_cache_path(source,bbox,day_range,date,folder)
+    cache_file.parent.mkdir(parents=True,exist_ok=True)
     if use_cache and cache_file.exists():
         if verbose:
             print(f"[cache] Reading {cache_file.name}")
