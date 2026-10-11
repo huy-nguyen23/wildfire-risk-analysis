@@ -107,6 +107,7 @@ def download_era5_batch(regions,start,end,force=False):
                 "use_cache": not force,
                 "verbose": False,
                 "folder": folder,
+                "region_name":name
             }
 
             try:
@@ -126,8 +127,7 @@ def download_era5_batch(regions,start,end,force=False):
 
             # download_era5_month() already saved the file - find its name
             n_days = calendar.monthrange(year, month)[1]
-            saved_file = era5_api._cache_path(variables, area, year, month,
-                                                  f"01to{n_days:02d}", folder)
+            saved_file = era5_api._cache_path(variables, area, year, month,f"01to{n_days:02d}", folder,region_name=name)
             pipeline.record_download("era5", key, path=saved_file, status="ok")
             counts["ok"] += 1
             log.info("ERA5 %s -> ok", key)
@@ -139,6 +139,7 @@ def download_worldcover_batch(regions,year,force=False):
 
     counts = {"ok": 0, "skipped": 0, "failed": 0}
     folder = config.RAW_SUBDIRS["worldcover"] / str(year)
+    folder.mkdir(parents=True, exist_ok=True)
 
     for name in regions:
         key = f"{name}_{year}"

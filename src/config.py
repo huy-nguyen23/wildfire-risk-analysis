@@ -45,6 +45,7 @@ COMPARE_SOURCE="MODIS_SP"
 SEA_BBOX = "92,-11,141,29"          # all of Southeast Asia
 BBOX_CHIANG_MAI = "98,17,100,20"    # northern Thailand 
 BBOX_TAY_NGUYEN = "107,11,109,14"   # Central Highlands, Vietnam
+BBOX_SOUTHEAST_ASIA = "92.0,5.5,109.5,28.5"
 
 SEA_COUNTRIES = {
     "BRN": "Brunei",
@@ -105,8 +106,7 @@ LAND_COVER_CLASSES = {
 STUDY_COUNTRIES = ["THA", "VNM", "LAO", "KHM", "MMR"]
 
 STUDY_REGIONS = {
-    "chiang_mai": BBOX_CHIANG_MAI,
-    "tay_nguyen": BBOX_TAY_NGUYEN,
+    "southeast_asia": BBOX_SOUTHEAST_ASIA
 }
 
 COUNTRY_BBOX_APPROX = {

@@ -155,26 +155,38 @@ def mosaic_tiles(tile_names,bbox,year=DEFAULT_YEAR,max_pixels=20000000):
         (mosaic, transform): a single 2D numpy array covering the full bbox,
         and its affine transform.
     """
-    west,south,east,north=bbox
-    datasets=[open_tile(t,year) for t in tile_names]
-    
-    res=None
+    west, south, east, north = bbox
+
+    tiles = []
+    for name in tile_names:
+        try:
+            tiles.append(open_tile(name, year))
+        except Exception as error:
+            if "404" in str(error):
+                continue
+            raise
+
+    if len(tiles) == 0:
+        raise FileNotFoundError(f"No land tiles found for bbox: {bbox}")
+
+    resolution = None
     if max_pixels is not None:
-        native_res_x= datasets[0].transform.a 
-        native_res_y=-datasets[0].transform.e 
-        native_cols=(east-west)/native_res_x
-        native_rows=(north-south)/native_res_y
-        if native_cols*native_rows> max_pixels:
-            scale=math.sqrt((native_cols*native_rows)/max_pixels)
-            res=(native_res_x*scale,native_res_y*scale)        
-        
+        pixel_width = tiles[0].transform.a
+        pixel_height = -tiles[0].transform.e
+        n_columns = (east - west) / pixel_width
+        n_rows = (north - south) / pixel_height
+        total = n_columns * n_rows
+        if total > max_pixels:
+            shrink = math.sqrt(total / max_pixels)
+            resolution = (pixel_width * shrink, pixel_height * shrink)
+
     try:
-        mosaic,out_transform=merge(datasets,bounds=(west,south,east,north),res=res)
+        mosaic, transform = merge(tiles, bounds=(west, south, east, north), res=resolution)
     finally:
-        for ds in datasets:
-            ds.close()
-    
-    return mosaic[0], out_transform
+        for tile in tiles:
+            tile.close()
+
+    return mosaic[0], transform
         
 def _validate_bbox(bbox):
     if len(bbox) != 4:
@@ -238,6 +250,7 @@ def download_worldcover(bbox,year=DEFAULT_YEAR,use_cache=True,verbose=True,max_p
     _validate_year(year)
 
     cache_file = _cache_path(bbox, year,folder)
+    cache_file.parent.mkdir(parents=True, exist_ok=True)
     if use_cache and cache_file.exists():
         if verbose:
             print(f"[cache] Reading {cache_file.name}")
@@ -259,8 +272,9 @@ def download_worldcover(bbox,year=DEFAULT_YEAR,use_cache=True,verbose=True,max_p
         return None
 
     # Cache the merged result as a small GeoTIFF so a rerun is instant.
+    cache_file.parent.mkdir(parents=True, exist_ok=True)
     with rasterio.open(
-        cache_file, "w", driver="GTiff",
+        str(cache_file), "w", driver="GTiff",
         height=data.shape[0], width=data.shape[1], count=1,
         dtype=data.dtype, crs="EPSG:4326", transform=transform,
         compress="deflate",

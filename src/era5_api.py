@@ -106,26 +106,80 @@ def _validate_area(area):
 
     return north, west, south, east
     
-def _cache_path(variables, area, year, month, day,folder=None):
-    """Build a deterministic filename so one query always maps to one file."""
+def find_region_name(area):
+    """Find friendly region name for Copernicus area [north, west, south, east]."""
+    import config
+
+    if hasattr(config, "STUDY_REGIONS"):
+        for name, bbox_str in config.STUDY_REGIONS.items():
+            parts = [float(x.strip()) for x in str(bbox_str).split(",")]
+            if len(parts) == 4:
+                west, south, east, north = parts
+                if (abs(area[0] - north) < 0.1 and
+                    abs(area[1] - west) < 0.1 and
+                    abs(area[2] - south) < 0.1 and
+                    abs(area[3] - east) < 0.1):
+                    return name
+
+    known_boxes = {
+        "chiang_mai": [20, 98, 17, 100],
+        "tay_nguyen": [14, 107, 11, 109],
+    }
+    for name, box in known_boxes.items():
+        if (abs(area[0] - box[0]) < 0.1 and
+            abs(area[1] - box[1]) < 0.1 and
+            abs(area[2] - box[2]) < 0.1 and
+            abs(area[3] - box[3]) < 0.1):
+            return name
+
+    return None    
+    
+def _cache_path(variables, area, year, month, day,folder=None,region_name=None):
     if folder is None:
-        folder=RAW_DIR
-    var_part = "_".join(sorted(variables))
-    area_part = "_".join(str(round(x, 2)) for x in area).replace(".", "p").replace("-", "m")
-    if isinstance(day, int):
-        day_part = f"{day:02d}"
+        folder = RAW_DIR
+
+    if region_name:
+        region_part = region_name
     else:
-        day_part = str(day)
-    return Path(folder) / f"era5land_{var_part}_{area_part}_{year}{int(month):02d}{day_part}.nc"
+        found = find_region_name(area)
+        if found:
+            region_part = found
+        else:
+            area_texts = []
+            for value in area:
+                area_texts.append(str(round(value, 2)).replace(".", "p").replace("-", "m"))
+            region_part = "_".join(area_texts)
+
+    import config
+    is_standard = (
+        len(variables) >= len(config.ERA5_VARIABLES)
+        and set(variables) == set(config.ERA5_VARIABLES.keys())
+    )
+    if is_standard:
+        var_part = ""
+    else:
+        short_names = []
+        for v in sorted(variables):
+            short_names.append(config.ERA5_VARIABLES.get(v, v))
+        var_part = f"_{'_'.join(short_names)}"
+
+    if isinstance(day, str) and day.startswith("01to"):
+        date_part = f"{year}{int(month):02d}"
+    elif isinstance(day, int):
+        date_part = f"{year}{int(month):02d}{day:02d}"
+    else:
+        date_part = f"{year}{int(month):02d}_{day}"
+
+    return Path(folder) / f"era5_{region_part}{var_part}_{date_part}.nc"
 
 
-def download_era5(variables,area,year,month,day,hours=None,use_cache=True,verbose=True,folder=None):
+def download_era5(variables,area,year,month,day,hours=None,use_cache=True,verbose=True,folder=None,region_name=None):
     variables=_validate_variables(variables)
     _validate_area(area)
     _validate_date(year,month,day)
     hours=hours or ALL_HOURS
     
-    cache_file = _cache_path(variables, area, year, month, day,folder)
+    cache_file = _cache_path(variables, area, year, month, day,folder,region_name=region_name)
     if use_cache and cache_file.exists():
         if verbose:
             print(f"[cache] Reading {cache_file.name}")
@@ -163,7 +217,7 @@ def download_era5(variables,area,year,month,day,hours=None,use_cache=True,verbos
 
     return xr.open_dataset(cache_file)
 
-def download_era5_month(variables,area,year,month,hours=None,use_cache=None,verbose=True,folder=None):
+def download_era5_month(variables,area,year,month,hours=None,use_cache=None,verbose=True,folder=None,region_name=None):
     variables = _validate_variables(variables)
     _validate_area(area)
     _validate_date(year, month, 1)
@@ -175,7 +229,7 @@ def download_era5_month(variables,area,year,month,hours=None,use_cache=None,verb
     for d in range(1, n_days + 1):
         days.append(f"{d:02d}")
 
-    cache_file = _cache_path(variables, area, year, month, f"01to{n_days:02d}", folder)
+    cache_file = _cache_path(variables, area, year, month, f"01to{n_days:02d}", folder,region_name=region_name)
     cache_file.parent.mkdir(parents=True, exist_ok=True)
     if use_cache and cache_file.exists():
         if verbose:

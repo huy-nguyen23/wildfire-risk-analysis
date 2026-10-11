@@ -429,3 +429,18 @@ def check_primary_key(df, verbose=True):
                   f"(grid_id, date)")
 
     return dupes   
+
+def apply_schema_dtypes(df):
+    result = df.copy()
+
+    for column in result.columns:
+        if column not in SCHEMA:
+            continue
+        wanted = SCHEMA[column]["dtype"]
+
+        if wanted.startswith("int") and not result[column].isna().any():
+            result[column] = result[column].astype("int64")
+        elif wanted.startswith("float"):
+            result[column] = result[column].astype("float64")
+
+    return result
