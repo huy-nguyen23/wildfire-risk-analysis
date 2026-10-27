@@ -270,6 +270,10 @@ def _snap_index(value, size=GRID_SIZE_DEG):
     steps_per_degree = round(1 / size)      # 0.1 -> 10
     return math.floor(value * steps_per_degree + 0.5)
 
+def snap_to_grid(value,size=GRID_SIZE_DEG):
+    steps_per_degree = round(1 / size)      # 0.1 -> 10
+    return math.floor(value * steps_per_degree + 0.5)
+
 def latlon_to_grid_id(lat, lon, size=GRID_SIZE_DEG):
     """Turn any coordinate into the id of its grid cell.
 

@@ -1,0 +1,58 @@
+20:56:10  INFO     source=era5 countries=['THA', 'VNM', 'LAO', 'KHM', 'MMR'] regions=['southeast_asia'] 2024-01-01..2024-12-31
+20:56:10  INFO     log file: D:\Duanduhoche.Huy\wildfire-risk-analysis\logs\download_20261012.log
+21:02:43  INFO     Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-2/2026-10-12/61b718c71161f63d8f4175d4981a9462.nc
+21:04:36  INFO     ERA5 southeast_asia_2024-01 -> ok
+21:17:12  INFO     Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-1/2026-10-12/c320b21d1ce59649a275c4222495baec.nc
+21:19:22  INFO     ERA5 southeast_asia_2024-02 -> ok
+21:27:54  INFO     Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-2/2026-10-12/2df631f0ee2f9a9f35be17288dfeca77.nc
+21:29:49  INFO     ERA5 southeast_asia_2024-03 -> ok
+21:38:23  INFO     Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-1/2026-10-12/2be40f18cabd50b2e808a8e6d5ce6191.nc
+21:39:25  INFO     ERA5 southeast_asia_2024-04 -> ok
+21:50:02  INFO     Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-1/2026-10-12/651c0bafa8c929f2d5889b9212e7d5fe.nc
+21:52:11  INFO     ERA5 southeast_asia_2024-05 -> ok
+22:10:52  INFO     Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-1/2026-10-12/e2ae00a0538c0ab5d1dd76c4f23eeb2a.nc
+22:12:07  INFO     ERA5 southeast_asia_2024-06 -> ok
+22:20:38  INFO     Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-3/2026-10-12/14e1b61fe81dbe7893b7a0585aaed03c.nc
+22:21:38  INFO     ERA5 southeast_asia_2024-07 -> ok
+22:30:11  INFO     Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-1/2026-10-12/7a483dd233b486b471ef1bb604929a12.nc
+22:32:53  INFO     ERA5 southeast_asia_2024-08 -> ok
+22:35:09  WARNING  stopped by user - what was done so far is in the manifest
+22:36:56  INFO     source=era5 countries=['THA', 'VNM', 'LAO', 'KHM', 'MMR'] regions=['southeast_asia'] 2024-01-01..2024-12-31
+22:36:56  INFO     log file: D:\Duanduhoche.Huy\wildfire-risk-analysis\logs\download_20261012.log
+22:43:24  INFO     Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-3/2026-10-12/85e0c27114c9e487a8dc77c3f171d0a2.nc
+22:45:01  INFO     ERA5 southeast_asia_2024-09 -> ok
+22:55:32  INFO     Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-3/2026-10-12/265850252e55e67451d18450aa01e046.nc
+22:57:00  INFO     ERA5 southeast_asia_2024-10 -> ok
+23:05:30  INFO     Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-3/2026-10-12/ed5c9543ce6688e6ec49f656ef155345.nc
+23:06:45  INFO     ERA5 southeast_asia_2024-11 -> ok
+23:15:18  INFO     Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-2/2026-10-12/3c7835e88827fccb9b32db195e5927fb.nc
+23:16:25  INFO     ERA5 southeast_asia_2024-12 -> ok
+23:26:43  INFO     source=era5 countries=['THA', 'VNM', 'LAO', 'KHM', 'MMR'] regions=['southeast_asia'] 2025-01-01..2025-12-31
+23:26:43  INFO     log file: D:\Duanduhoche.Huy\wildfire-risk-analysis\logs\download_20261012.log
+23:37:15  INFO     Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-1/2026-10-12/f0014b4e30d00fccd37c5dd00ca04293.nc
+23:38:43  INFO     ERA5 southeast_asia_2025-01 -> ok
+23:47:14  INFO     Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-1/2026-10-12/4ccdcfc35bea2d6ef93f1304cbf6e7a8.nc
+23:48:10  INFO     ERA5 southeast_asia_2025-02 -> ok
+00:48:55  WARNING  Recovering from connection error [HTTPSConnectionPool(host='cds.climate.copernicus.eu', port=443): Max retries exceeded with url: /api/retrieve/v1/jobs/5e186f08-2c85-42e3-af92-79d75cba3b01?log=True&request=True (Caused by NameResolutionError("<urllib3.connection.HTTPSConnection object at 0x000001E0DDE87290>: Failed to resolve 'cds.climate.copernicus.eu' ([Errno 11001] getaddrinfo failed)"))], attempt 1 of 500
+00:48:55  WARNING  Retrying in 120 seconds
+12:20:27  INFO     Retrying now...
+12:20:32  INFO     Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-3/2026-10-12/3ba2cd05379d80cd03bba814b4461100.nc
+12:21:59  INFO     ERA5 southeast_asia_2025-03 -> ok
+12:30:27  INFO     Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-1/2026-10-13/84d64d5e35cfad6dfaff2ddbde0b17e.nc
+12:31:40  INFO     ERA5 southeast_asia_2025-04 -> ok
+12:42:10  INFO     Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-1/2026-10-13/68f08781662aebf6a10a7b8a469e7873.nc
+12:43:59  INFO     ERA5 southeast_asia_2025-05 -> ok
+12:52:29  INFO     Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-3/2026-10-13/9988bf4bfe7e64add079504c5abaa155.nc
+12:54:02  INFO     ERA5 southeast_asia_2025-06 -> ok
+13:14:46  INFO     Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-3/2026-10-13/64b96abadf0432c994e6a93350654b73.nc
+13:17:55  INFO     ERA5 southeast_asia_2025-07 -> ok
+13:26:28  INFO     Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-2/2026-10-13/b36ecfb7dbb2b086442e11a65c58a8e1.nc
+13:30:12  INFO     ERA5 southeast_asia_2025-08 -> ok
+13:48:51  INFO     Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-3/2026-10-13/d7d7f799cb5f8e709a8b37bc05ac8981.nc
+13:52:28  INFO     ERA5 southeast_asia_2025-09 -> ok
+14:13:06  INFO     Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-1/2026-10-13/931d96092e7e877e69308f7124ab6ffd.nc
+14:14:23  INFO     ERA5 southeast_asia_2025-10 -> ok
+15:13:32  INFO     Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-2/2026-10-13/7a608365375237a6ebfebd9c3f6365fb.nc
+15:14:51  INFO     ERA5 southeast_asia_2025-11 -> ok
+16:24:09  INFO     Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-3/2026-10-13/acefcade70a5213c8303002f6ccbe23c.nc
+16:25:24  INFO     ERA5 southeast_asia_2025-12 -> ok

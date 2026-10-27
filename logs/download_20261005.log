@@ -1,0 +1,145 @@
+18:45:26  INFO     source=worldcover countries=['THA', 'VNM', 'LAO', 'KHM', 'MMR'] regions=['chiang_mai', 'tay_nguyen'] 2020-01-01..2025-12-31
+18:45:26  INFO     log file: D:\Duanduhoche.Huy\wildfire-risk-analysis\logs\download_20261005.log
+18:45:27  INFO     boto3 not available, falling back to a DummySession.
+18:45:33  INFO     boto3 not available, falling back to a DummySession.
+18:45:36  INFO     boto3 not available, falling back to a DummySession.
+18:45:38  WARNING  stopped by user - what was done so far is in the manifest
+18:48:49  INFO     source=worldcover countries=['THA', 'VNM', 'LAO', 'KHM', 'MMR'] regions=['chiang_mai', 'tay_nguyen'] 2020-01-01..2025-12-31
+18:48:49  INFO     log file: D:\Duanduhoche.Huy\wildfire-risk-analysis\logs\download_20261005.log
+18:49:12  INFO     GDAL signalled an error: err_no=4, msg="Attempt to create new tiff file `D:\\Duanduhoche.Huy\\wildfire-risk-analysis\\data\\raw\\worldcover\\2021\\worldcover_2021_98p0_17p0_100p0_20p0.tif' failed: D:\\Duanduhoche.Huy\\wildfire-risk-analysis\\data\\raw\\worldcover\\2021\\worldcover_2021_98p0_17p0_100p0_20p0.tif: No such file or directory"
+18:49:12  WARNING  WorldCover chiang_mai_2021 failed: Attempt to create new tiff file 'D:\Duanduhoche.Huy\wildfire-risk-analysis\data\raw\worldcover\2021\worldcover_2021_98p0_17p0_100p0_20p0.tif' failed: D:\Duanduhoche.Huy\wildfire-risk-analysis\data\raw\worldcover\2021\worldcover_2021_98p0_17p0_100p0_20p0.tif: No such file or directory
+18:49:29  WARNING  stopped by user - what was done so far is in the manifest
+19:31:52  INFO     source=era5 countries=['THA', 'VNM', 'LAO', 'KHM', 'MMR'] regions=['five_countries'] 2020-01-01..2025-12-31
+19:31:52  INFO     log file: D:\Duanduhoche.Huy\wildfire-risk-analysis\logs\download_20261005.log
+19:34:53  WARNING  stopped by user - what was done so far is in the manifest
+19:34:58  INFO     source=era5 countries=['THA', 'VNM', 'LAO', 'KHM', 'MMR'] regions=['five_countries'] 2020-01-01..2025-12-31
+19:34:58  INFO     log file: D:\Duanduhoche.Huy\wildfire-risk-analysis\logs\download_20261005.log
+19:41:31  INFO     Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-2/2026-10-05/1584f2c774485dcf9de7d95d7a42aa9d.nc
+19:59:08  WARNING  Recovering from connection error [('Connection broken: IncompleteRead(136396800 bytes read, 60242048 more expected)', IncompleteRead(136396800 bytes read, 60242048 more expected))], attempt 1 of 500
+19:59:08  WARNING  Retrying in 120 seconds
+20:01:08  INFO     Retrying now...
+20:01:08  INFO     Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-2/2026-10-05/1584f2c774485dcf9de7d95d7a42aa9d.nc
+20:01:08  INFO     D:\Duanduhoche.Huy\wildfire-risk-analysis\data\raw\era5\2020\era5land_10m_u_component_of_wind_10m_v_component_of_wind_2m_temperature_total_precipitation_volumetric_soil_water_layer_1_28p5_92p2_5p6_109p5_20200101to31.nc: resuming download from byte 136314880
+20:02:49  WARNING  Recovering from connection error [('Connection broken: IncompleteRead(4636672 bytes read, 55687296 more expected)', IncompleteRead(4636672 bytes read, 55687296 more expected))], attempt 2 of 500
+20:02:49  WARNING  Retrying in 120 seconds
+20:03:52  WARNING  stopped by user - what was done so far is in the manifest
+20:05:07  INFO     source=worldcover countries=['THA', 'VNM', 'LAO', 'KHM', 'MMR'] regions=['chiang_mai', 'tay_nguyen', 'five_countries'] 2020-01-01..2025-12-31
+20:05:07  INFO     log file: D:\Duanduhoche.Huy\wildfire-risk-analysis\logs\download_20261005.log
+20:05:32  WARNING  stopped by user - what was done so far is in the manifest
+20:06:15  INFO     source=worldcover countries=['THA', 'VNM', 'LAO', 'KHM', 'MMR'] regions=['chiang_mai', 'tay_nguyen'] 2020-01-01..2025-12-31
+20:06:15  INFO     log file: D:\Duanduhoche.Huy\wildfire-risk-analysis\logs\download_20261005.log
+20:07:47  INFO     GDAL signalled an error: err_no=4, msg="Attempt to create new tiff file `D:\\Duanduhoche.Huy\\wildfire-risk-analysis\\data\\raw\\worldcover\\2021\\worldcover_2021_98p0_17p0_100p0_20p0.tif' failed: D:\\Duanduhoche.Huy\\wildfire-risk-analysis\\data\\raw\\worldcover\\2021\\worldcover_2021_98p0_17p0_100p0_20p0.tif: No such file or directory"
+20:07:47  WARNING  WorldCover chiang_mai_2021 failed: Attempt to create new tiff file 'D:\Duanduhoche.Huy\wildfire-risk-analysis\data\raw\worldcover\2021\worldcover_2021_98p0_17p0_100p0_20p0.tif' failed: D:\Duanduhoche.Huy\wildfire-risk-analysis\data\raw\worldcover\2021\worldcover_2021_98p0_17p0_100p0_20p0.tif: No such file or directory
+20:09:06  WARNING  stopped by user - what was done so far is in the manifest
+20:14:41  INFO     source=era5 countries=['THA', 'VNM', 'LAO', 'KHM', 'MMR'] regions=['vnm_lao'] 2020-01-01..2025-12-31
+20:14:41  INFO     log file: D:\Duanduhoche.Huy\wildfire-risk-analysis\logs\download_20261005.log
+20:14:46  WARNING  Recovering from HTTP error [502 Bad Gateway], attempt 1 of 500
+20:14:46  WARNING  Retrying in 120 seconds
+20:14:57  WARNING  stopped by user - what was done so far is in the manifest
+20:15:10  INFO     source=era5 countries=['THA', 'VNM', 'LAO', 'KHM', 'MMR'] regions=['vnm_lao'] 2020-01-01..2025-12-31
+20:15:10  INFO     log file: D:\Duanduhoche.Huy\wildfire-risk-analysis\logs\download_20261005.log
+20:23:52  INFO     Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-3/2026-10-05/3678583bd8994db7793d5134ecd8d537.nc
+20:26:36  INFO     ERA5 vnm_lao_2020-01 -> ok
+20:34:45  INFO     Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-1/2026-10-05/f412e9cdbf908e58be3c607e7f3ca232.nc
+20:40:13  INFO     ERA5 vnm_lao_2020-02 -> ok
+20:50:58  INFO     Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-2/2026-10-05/c3f3d287b4c645d54b48fb2c44ef5729.nc
+20:53:33  WARNING  Recovering from connection error [('Connection broken: IncompleteRead(5750784 bytes read, 73870836 more expected)', IncompleteRead(5750784 bytes read, 73870836 more expected))], attempt 1 of 500
+20:53:33  WARNING  Retrying in 120 seconds
+20:55:33  INFO     Retrying now...
+20:55:33  INFO     Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-2/2026-10-05/c3f3d287b4c645d54b48fb2c44ef5729.nc
+20:55:36  INFO     D:\Duanduhoche.Huy\wildfire-risk-analysis\data\raw\era5\2020\era5land_10m_u_component_of_wind_10m_v_component_of_wind_2m_temperature_total_precipitation_volumetric_soil_water_layer_1_23p4_100p1_8p2_109p5_20200301to31.nc: resuming download from byte 5242880
+20:59:55  INFO     ERA5 vnm_lao_2020-03 -> ok
+21:29:05  INFO     Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-2/2026-10-05/aeaf3a3f08487d6e150d49babbd5bbe2.nc
+21:31:23  INFO     ERA5 vnm_lao_2020-04 -> ok
+21:40:03  INFO     Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-3/2026-10-05/608ccaff37cf1bec9661d80763413209.nc
+21:40:22  INFO     ERA5 vnm_lao_2020-05 -> ok
+22:01:17  INFO     Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-3/2026-10-05/dec37539a02a888897087aa577ffbb4e.nc
+22:03:18  INFO     ERA5 vnm_lao_2020-06 -> ok
+22:11:57  INFO     Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-3/2026-10-05/d76725ff2e5d322e4064aeaca38053f4.nc
+22:12:13  INFO     ERA5 vnm_lao_2020-07 -> ok
+22:20:55  INFO     Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-1/2026-10-05/278419cca25f415c682ffdad66375ae1.nc
+22:21:19  INFO     ERA5 vnm_lao_2020-08 -> ok
+22:29:54  INFO     Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-3/2026-10-05/223e7e2e89bedf23fe04570e58b475dc.nc
+22:30:09  INFO     ERA5 vnm_lao_2020-09 -> ok
+22:38:52  INFO     Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-3/2026-10-05/ad0e45879a9fbc08a93d037521bce7cb.nc
+22:39:05  INFO     ERA5 vnm_lao_2020-10 -> ok
+22:47:43  INFO     Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-1/2026-10-05/b1b385c50f6add932c69ed5a87bb698c.nc
+22:47:55  INFO     ERA5 vnm_lao_2020-11 -> ok
+22:54:26  INFO     Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-2/2026-10-05/e1d679541d8d60dbdd341ab2237b3b7e.nc
+22:54:38  INFO     ERA5 vnm_lao_2020-12 -> ok
+23:03:11  INFO     Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-2/2026-10-05/ed21e65b094546666150d68ecc250e73.nc
+23:03:49  INFO     ERA5 vnm_lao_2021-01 -> ok
+23:14:23  INFO     Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-2/2026-10-05/32fcd45212630b10286de86582c000ee.nc
+23:14:34  INFO     ERA5 vnm_lao_2021-02 -> ok
+23:21:08  INFO     Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-3/2026-10-05/240e819833c00cfdcbe1e0cad851c82.nc
+23:21:23  INFO     ERA5 vnm_lao_2021-03 -> ok
+23:29:57  INFO     Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-2/2026-10-05/93994f131112987e68d18d3979bb6b35.nc
+23:30:10  INFO     ERA5 vnm_lao_2021-04 -> ok
+23:29:10  INFO     Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-2/2026-10-05/52d37716a27a4872c5a7cde9d9b1d39a.nc
+23:29:25  INFO     ERA5 vnm_lao_2021-05 -> ok
+23:30:03  WARNING  Recovering from connection error [HTTPSConnectionPool(host='cds.climate.copernicus.eu', port=443): Max retries exceeded with url: /api/retrieve/v1/jobs/1863c4b0-feaa-4260-8cb6-7213b7a096ea?log=True&request=True (Caused by NameResolutionError("<urllib3.connection.HTTPSConnection object at 0x00000232CD9E7C50>: Failed to resolve 'cds.climate.copernicus.eu' ([Errno 11001] getaddrinfo failed)"))], attempt 1 of 500
+23:30:03  WARNING  Retrying in 120 seconds
+23:32:03  INFO     Retrying now...
+00:37:29  WARNING  Recovering from connection error [HTTPSConnectionPool(host='cds.climate.copernicus.eu', port=443): Max retries exceeded with url: /api/retrieve/v1/jobs/1863c4b0-feaa-4260-8cb6-7213b7a096ea?log=True&request=True (Caused by NameResolutionError("<urllib3.connection.HTTPSConnection object at 0x00000232CD9E55B0>: Failed to resolve 'cds.climate.copernicus.eu' ([Errno 11001] getaddrinfo failed)"))], attempt 1 of 500
+00:37:29  WARNING  Retrying in 120 seconds
+20:54:22  INFO     Retrying now...
+20:54:27  INFO     Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-1/2026-10-07/3950b7004f2f09c4ebcfe572a8636e18.nc
+21:31:56  WARNING  Recovering from connection error [('Connection broken: IncompleteRead(30632832 bytes read, 56796037 more expected)', IncompleteRead(30632832 bytes read, 56796037 more expected))], attempt 1 of 500
+21:31:56  WARNING  Retrying in 120 seconds
+21:33:56  INFO     Retrying now...
+21:33:56  INFO     Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-1/2026-10-07/3950b7004f2f09c4ebcfe572a8636e18.nc
+21:33:58  INFO     D:\Duanduhoche.Huy\wildfire-risk-analysis\data\raw\era5\2021\era5land_10m_u_component_of_wind_10m_v_component_of_wind_2m_temperature_total_precipitation_volumetric_soil_water_layer_1_23p4_100p1_8p2_109p5_20210601to30.nc: resuming download from byte 30408704
+21:57:22  WARNING  Recovering from connection error [('Connection broken: IncompleteRead(47474880 bytes read, 9545285 more expected)', IncompleteRead(47474880 bytes read, 9545285 more expected))], attempt 2 of 500
+21:57:22  WARNING  Retrying in 120 seconds
+21:59:22  INFO     Retrying now...
+21:59:22  INFO     Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-1/2026-10-07/3950b7004f2f09c4ebcfe572a8636e18.nc
+21:59:24  INFO     D:\Duanduhoche.Huy\wildfire-risk-analysis\data\raw\era5\2021\era5land_10m_u_component_of_wind_10m_v_component_of_wind_2m_temperature_total_precipitation_volumetric_soil_water_layer_1_23p4_100p1_8p2_109p5_20210601to30.nc: resuming download from byte 77594624
+22:02:17  INFO     ERA5 vnm_lao_2021-06 -> ok
+22:10:56  INFO     Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-3/2026-10-09/983d254d1f07678f125fd1c8bfe20ffa.nc
+22:17:17  INFO     ERA5 vnm_lao_2021-07 -> ok
+22:30:02  INFO     Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-2/2026-10-09/cf6de9f97fb80bc27d87a89c093cc532.nc
+22:31:56  INFO     ERA5 vnm_lao_2021-08 -> ok
+22:43:43  INFO     Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-2/2026-10-09/c7168fef19c4620afe910559ec6d2c90.nc
+22:45:02  INFO     ERA5 vnm_lao_2021-09 -> ok
+22:53:47  INFO     Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-1/2026-10-09/ea720cfee4d8622fa1a1b64d595e98e0.nc
+22:54:33  INFO     ERA5 vnm_lao_2021-10 -> ok
+23:09:19  INFO     Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-2/2026-10-09/45b64d284c27e3a3cd1ff2ec6a588af1.nc
+23:10:16  INFO     ERA5 vnm_lao_2021-11 -> ok
+23:21:00  INFO     Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-2/2026-10-09/bb3530756433bde793cf2871a66a4bd.nc
+23:21:35  INFO     ERA5 vnm_lao_2021-12 -> ok
+23:28:16  INFO     Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-1/2026-10-09/94d109f3455294e064dbbb3db7485aa4.nc
+23:28:44  INFO     ERA5 vnm_lao_2022-01 -> ok
+23:35:20  INFO     Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-3/2026-10-09/1260aa7a27e0f7b9932400213f4fa576.nc
+23:35:50  INFO     ERA5 vnm_lao_2022-02 -> ok
+23:44:35  INFO     Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-3/2026-10-09/dc6434d59e8d41effae88e9d79147388.nc
+23:45:16  INFO     ERA5 vnm_lao_2022-03 -> ok
+23:57:55  INFO     Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-1/2026-10-09/5aeaec4df276d73a15b869a56a9c829c.nc
+23:58:31  INFO     ERA5 vnm_lao_2022-04 -> ok
+00:07:08  INFO     Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-1/2026-10-09/da14bb276f570c1d120f16b95b9bbacc.nc
+00:07:55  INFO     ERA5 vnm_lao_2022-05 -> ok
+00:16:31  INFO     Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-1/2026-10-09/3c27814b33cd6726a6fa843ba9e245c8.nc
+00:17:07  INFO     ERA5 vnm_lao_2022-06 -> ok
+00:31:46  INFO     Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-2/2026-10-09/b7f44657fe046126ee725e4837e812fb.nc
+00:32:28  INFO     ERA5 vnm_lao_2022-07 -> ok
+00:45:13  INFO     Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-2/2026-10-09/400e2d3aa5de13103415e23d71fbc3ec.nc
+00:46:04  INFO     ERA5 vnm_lao_2022-08 -> ok
+00:54:46  INFO     Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-1/2026-10-09/4adb89123c6fb34f8e696dcc2e481a8.nc
+00:55:21  INFO     ERA5 vnm_lao_2022-09 -> ok
+01:03:54  INFO     Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-1/2026-10-09/c9d750bd3a4f5f0862d7f9e80c065933.nc
+01:04:25  INFO     ERA5 vnm_lao_2022-10 -> ok
+01:13:05  INFO     Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-1/2026-10-09/98728e63edfa78b45dac3f726dcbfbe2.nc
+01:13:33  INFO     ERA5 vnm_lao_2022-11 -> ok
+01:22:20  INFO     Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-2/2026-10-09/e254240249bbc6f19bfd54e27f459529.nc
+01:22:50  INFO     ERA5 vnm_lao_2022-12 -> ok
+01:33:36  INFO     Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-2/2026-10-09/887b5ceb8d3f54748e7e5679ecef4787.nc
+01:34:11  INFO     ERA5 vnm_lao_2023-01 -> ok
+01:46:58  INFO     Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-3/2026-10-09/41d6011291a404b4dbc849ef00e68c27.nc
+01:48:02  INFO     ERA5 vnm_lao_2023-02 -> ok
+02:11:09  INFO     Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-3/2026-10-09/adbb588298702d5fe94de8520afb1b24.nc
+02:12:12  INFO     ERA5 vnm_lao_2023-03 -> ok
+02:37:14  INFO     Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-1/2026-10-09/e8ab82297c8b8888891f8c8b056f96a0.nc
+02:37:45  INFO     ERA5 vnm_lao_2023-04 -> ok
+03:14:52  INFO     Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-1/2026-10-09/aa82368992b5772abf8d3d5dd4e6e61.nc
+03:15:23  INFO     ERA5 vnm_lao_2023-05 -> ok
+03:56:48  INFO     Downloading https://object-store.os-api.cci2.ecmwf.int:443/cci2-prod-cache-2/2026-10-09/5f5f3a8c1947ecc83c88be26b7880f8c.nc
+03:57:18  INFO     ERA5 vnm_lao_2023-06 -> ok

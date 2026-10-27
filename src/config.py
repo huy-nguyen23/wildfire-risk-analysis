@@ -135,8 +135,30 @@ DRY_DAY_THRESHOLD_MM = 1.0
 
 RAINFALL_WINDOW_DAYS = 7
 
+DRY_SEASON_MONTHS=[1,2,3,4,5]
+
+EXTREME_HEAT_C=35.0
+
 RETRY_MAX_ATTEMPTS = 3  
 RETRY_BASE_DELAY_S = 1.0
 
 BOUNDARIES_URL = "https://naciscdn.org/naturalearth/50m/cultural/ne_50m_admin_0_countries.zip"
 BOUNDARIES_PATH = RAW_DIR / "boundaries" / "ne_50m_admin_0_countries.zip"
+
+PROCESSING_REGION="southeast_asia"
+PROCESSING_YEARS=[2020,2021,2022,2023,2024,2025]
+
+PROCESSED_FILES = {
+    "firms_clean": PROCESSED_DIR / "firms_clean.parquet",
+    "weather_daily": PROCESSED_DIR / "weather_daily.parquet",
+    "fire_weather": PROCESSED_DIR / "fire_weather.parquet",
+    "landcover_cells": PROCESSED_DIR / "landcover_cells.parquet",
+    "fire_weather_landcover": PROCESSED_DIR / "fire_weather_landcover.parquet",
+    "analysis_dataset": PROCESSED_DIR / "analysis_dataset",   
+    "training_sample": PROCESSED_DIR / "training_sample.parquet",
+}
+
+NEGATIVE_RATIO=3
+BUFFER_CELLS=1
+BUFFER_DAYS=1
+RANDOM_SEED=42

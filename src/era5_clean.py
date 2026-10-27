@@ -1,11 +1,12 @@
 from pathlib import Path
 import numpy as np
-import pandas as pd 
+import pandas as pd
 import config
 import schema
-import xarray as xr
 
 def load_raw_era5(raw_dir=None,max_files=1,verbose=True):
+    import xarray as xr
+
     if raw_dir is None:
         raw_dir = config.RAW_SUBDIRS["era5"]
 
@@ -34,19 +35,16 @@ def kelvin_to_celsius(values):
     """Kelvin -> degrees Celsius."""
     return values - 273.15
 
-
 def metres_to_mm(values):
     """Metres -> millimetres. ERA5-Land gives rain in METRES, not mm."""
     return values * 1000.0
 
-
 def ms_to_kmh(values):
     """Metres per second -> kilometres per hour."""
     return values * 3.6
-
-def wind_speed(u, v):
-    """Wind speed from its two parts: sqrt(u^2 + v^2)."""
-    return np.sqrt(u ** 2 + v ** 2)
+    
+def wind_speed(u,v):
+    return np.sqrt(u**2+v**2)
 
 def compare_wind_methods(df,time_column="time"):
     table = df.copy()
@@ -70,7 +68,7 @@ def compare_wind_methods(df,time_column="time"):
     result["understated_by_pct"] = ((1 - result["speed_wrong_ms"] / result["speed_correct_ms"]) * 100).round(1)
 
     return result
-
+    
 def compare_rainfall_methods(df,time_column="time"):
     table = df.copy()
     table[time_column] = pd.to_datetime(table[time_column])
@@ -93,8 +91,7 @@ def compare_rainfall_methods(df,time_column="time"):
 
     return result.reset_index()
 
-def to_dataframe(dataset):
-    """Turn an ERA5-Land dataset into a normal table with one row per hour."""
+def to_dataframe(dataset):    
     table = dataset.to_dataframe().reset_index()
 
     if "valid_time" in table.columns and "time" not in table.columns:
@@ -149,53 +146,6 @@ def aggregate_daily(df,time_column="time",verbose=True):
 
     return daily
 
-def add_rolling_features(df,window=config.RAINFALL_WINDOW_DAYS,min_periods=1,verbose=True):
-    table = df.sort_values(["grid_id", "date"]).reset_index(drop=True)
-    column = f"rainfall_{window}d_mm"
-    table[column] = np.nan
-
-    n_short_history = 0
-
-    for grid_id in table["grid_id"].unique():
-        rows = table["grid_id"] == grid_id
-        rain = table.loc[rows, "rainfall_mm"]
-        table.loc[rows, column] = rain.rolling(window, min_periods=min_periods).sum()
-
-        n_short_history = n_short_history + min(len(rain), window - 1)
-
-    if verbose:
-        print(f"Added {column}")
-        print(f"  {n_short_history:,} row(s) have less than {window} days of history")
-
-    return table
-
-def add_dry_days(df,threshold_mm=config.DRY_DAY_THRESHOLD_MM,verbose=True):
-    table = df.sort_values(["grid_id", "date"]).reset_index(drop=True)
-    dry_days = []
-
-    counter = 0
-    previous_cell = None
-
-    for grid_id, rain in zip(table["grid_id"], table["rainfall_mm"]):
-        if grid_id != previous_cell:
-            counter = 0
-            previous_cell = grid_id
-
-        if rain < threshold_mm:
-            counter = counter + 1
-        else:
-            counter = 0
-
-        dry_days.append(counter)
-
-    table["dry_days"] = dry_days
-
-    if verbose:
-        print(f"Added dry_days (threshold {threshold_mm} mm)")
-        print(f"  longest dry spell: {max(dry_days)} days")
-
-    return table
-
 def clean_era5(dataset,verbose=True):
     report = {}
 
@@ -207,9 +157,6 @@ def clean_era5(dataset,verbose=True):
     report["grid_cells"] = daily["grid_id"].nunique()
     report["days"] = daily["date"].nunique()
 
-    daily = add_rolling_features(daily, verbose=verbose)
-    daily = add_dry_days(daily, verbose=verbose)
-
     if verbose:
         print()
         print("=" * 60)
@@ -219,13 +166,31 @@ def clean_era5(dataset,verbose=True):
 
     return daily, report
 
-def clean_era5_folder(raw_dir=None,verbose=True):
+def find_era5_files(raw_dir=None,region_name=None,years=None):
     if raw_dir is None:
         raw_dir = config.RAW_SUBDIRS["era5"]
+    if region_name is None:
+        region_name = config.PROCESSING_REGION
+    if years is None:
+        years = config.PROCESSING_YEARS
 
-    files = sorted(Path(raw_dir).glob("**/*.nc"))
+    files = []
+    for file in sorted(Path(raw_dir).glob(f"**/era5_{region_name}_*.nc")):
+        year_month = file.stem.split("_")[-1]
+        if int(year_month[:4]) in years:
+            files.append(file)
+
     if len(files) == 0:
-        raise FileNotFoundError(f"No .nc files in {raw_dir}. Run scripts/download_all.py first.")
+        raise FileNotFoundError(
+            f"No ERA5 files for region {region_name!r} and years {years} in {raw_dir}. "
+            "Run scripts/download_all.py --source era5 first."
+        )
+    return files
+
+def clean_era5_folder(raw_dir=None,region_name=None,years=None,verbose=True):
+    import xarray as xr
+
+    files = find_era5_files(raw_dir, region_name, years)
 
     daily_tables = []
     hourly_rows = 0
@@ -244,9 +209,6 @@ def clean_era5_folder(raw_dir=None,verbose=True):
     n_before = len(daily)
     daily = daily.drop_duplicates(subset=["grid_id", "date"], keep="first")
     n_repeated = n_before - len(daily)
-
-    daily = add_rolling_features(daily, verbose=verbose)
-    daily = add_dry_days(daily, verbose=verbose)
 
     report = {
         "files": len(files),
@@ -268,10 +230,10 @@ def clean_era5_folder(raw_dir=None,verbose=True):
 
 def save_daily(df,path=None):
     if path is None:
-        path = config.PROCESSED_DIR / "weather_daily.parquet"
+        path = config.PROCESSED_FILES["weather_daily"]
     path = Path(path)
     path.parent.mkdir(parents=True, exist_ok=True)
 
     df.to_parquet(path, index=False)
     print(f"Saved {len(df):,} rows -> {path}")
-    return path
+    return path    
