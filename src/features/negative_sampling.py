@@ -3,7 +3,7 @@ from pathlib import Path
 import config 
 import schema
 import gc
-import dataset_build
+from features import dataset_build
 
 def neighbour_grid_ids(grid_id,buffer_cells=1):
     if buffer_cells < 0:

@@ -198,20 +198,50 @@ def build_fire_weather(firms_df,weather_df,verbose=True):
 
     return joined, unmatched, report
 
+def build_fire_weather_by_year(firms_df,weather_path,years,verbose=True):
+    report = {"hotspots_in": len(firms_df)}
+
+    with_grid = hotspots_to_grid(firms_df, verbose=verbose)
+    by_cell_day = count_hotspots_by_cell_day(with_grid, verbose=verbose)
+    del with_grid
+    report["cell_days_with_fire"] = len(by_cell_day)
+
+    fire_years = pd.to_datetime(by_cell_day["date"]).dt.year
+    joined_parts = []
+    unmatched_parts = [by_cell_day[~fire_years.isin(years)]]
+
+    for year in years:
+        weather_year = pd.read_parquet(weather_path, filters=[("year", "==", year)])
+        joined, unmatched = join_weather(by_cell_day[fire_years == year], weather_year, verbose=False)
+        joined_parts.append(joined)
+        unmatched_parts.append(unmatched)
+        if verbose:
+            print(f"  {year}: {len(joined):,} fire cell-days matched, {len(unmatched):,} unmatched")
+        del weather_year
+
+    joined = pd.concat(joined_parts, ignore_index=True)
+    joined = joined.sort_values(["grid_id", "date"]).reset_index(drop=True)
+    unmatched = pd.concat(unmatched_parts, ignore_index=True)
+
+    report["matched"] = len(joined)
+    report["unmatched"] = len(unmatched)
+    report["matched_percent"] = round(len(joined) / len(by_cell_day) * 100, 2)
+
+    if verbose:
+        print()
+        print("=" * 60)
+        for key in report:
+            print(f"  {key:22s} {report[key]:,}")
+        print("=" * 60)
+
+    return joined, unmatched, report
+
 def save_fire_weather(df,path=None):
     if path is None:
-        path = config.PROCESSED_DIR / "fire_weather.parquet"
+        path = config.PROCESSED_FILES["fire_weather"]
     path = Path(path)
     path.parent.mkdir(parents=True, exist_ok=True)
 
     df.to_parquet(path, index=False)
     print(f"Saved {len(df):,} rows -> {path}")
     return path
-
-
-
-
-
-
-
-

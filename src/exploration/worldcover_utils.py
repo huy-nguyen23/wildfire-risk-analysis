@@ -4,7 +4,7 @@ from matplotlib.colors import BoundaryNorm,ListedColormap
 import matplotlib.patches as mpatches
 import matplotlib.pyplot as plt
 import math
-import worldcover_api as wc
+from downloaders import worldcover_api as wc
 from config import DEFAULT_YEAR,LAND_COVER_CLASSES
 
 def _categorical_cmap_norm():

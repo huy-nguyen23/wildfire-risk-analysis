@@ -1,7 +1,7 @@
 import pandas as pd
 from pathlib import Path
 import config
-from firms_utils import add_datetime_columns 
+from exploration import firms_utils 
 
 def load_raw_firms(raw_dir=None,verbose=True):
     if raw_dir is None:
@@ -31,7 +31,7 @@ def load_raw_firms(raw_dir=None,verbose=True):
     return result
 
 def standardize_time(df,verbose=True):
-    result = add_datetime_columns(df)
+    result = firms_utils.add_datetime_columns(df)
 
     # A plain date column (no time part) for grouping by day later
     result["date"] = result["acq_datetime_utc"].dt.floor("D").dt.tz_localize(None)
@@ -145,6 +145,31 @@ def filter_invalid(df,verbose=True):
             print(report_table.to_string(index=False))
         else:
             print("  (no rule fired - the raw data passed every check)")
+
+    return result, report_table
+
+def keep_vegetation_fires(df,verbose=True):
+    if "type" not in df.columns:
+        if verbose:
+            print("No 'type' column: vegetation filter skipped")
+        return df, pd.DataFrame(columns=["type", "meaning", "rows_removed"])
+
+    meanings = config.FIRMS_TYPE_MEANINGS
+    report = []
+    for type_code in sorted(df["type"].dropna().unique().tolist()):
+        if type_code in config.FIRMS_FIRE_TYPES:
+            continue
+        n = int((df["type"] == type_code).sum())
+        report.append({"type": int(type_code), "meaning": meanings.get(int(type_code), "unknown"), "rows_removed": n})
+
+    keep = df["type"].isin(config.FIRMS_FIRE_TYPES)
+    result = df[keep].reset_index(drop=True)
+    report_table = pd.DataFrame(report, columns=["type", "meaning", "rows_removed"])
+
+    if verbose:
+        print(f"Non-vegetation hotspots removed: {len(df) - len(result):,} of {len(df):,}")
+        if len(report) > 0:
+            print(report_table.to_string(index=False))
 
     return result, report_table
 

@@ -12,7 +12,7 @@ import pipeline
 log=logging.getLogger("download_all")
 
 def download_firms_batch(countries,start,end,force=False):
-    import firms_api
+    from downloaders import firms_api
 
     counts = {"ok": 0, "skipped": 0, "failed": 0}
     bbox = pipeline.bbox_for_countries(countries)
@@ -82,7 +82,7 @@ def months_between(start,end):
     return months
 
 def download_era5_batch(regions,start,end,force=False):
-    import era5_api
+    from downloaders import era5_api
 
     counts = {"ok": 0, "skipped": 0, "failed": 0}
     variables = list(config.ERA5_VARIABLES.keys())
@@ -135,7 +135,7 @@ def download_era5_batch(regions,start,end,force=False):
     return counts
 
 def download_worldcover_batch(regions,year,force=False):
-    import worldcover_api
+    from downloaders import worldcover_api
 
     counts = {"ok": 0, "skipped": 0, "failed": 0}
     folder = config.RAW_SUBDIRS["worldcover"] / str(year)

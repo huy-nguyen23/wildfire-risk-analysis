@@ -1,0 +1,110 @@
+18:06:56  INFO     build started - log file: D:\Duanduhoche.Huy\wildfire-risk-analysis\logs\build_20261030.log
+18:06:56  INFO     [1/7] firms: skipped (output already exists)
+18:06:56  INFO     [2/7] weather: skipped (output already exists)
+18:06:56  INFO     [3/7] fire_weather: running
+18:08:34  INFO         hotspots_in                  5030113
+18:08:34  INFO         cell_days_with_fire          1672725
+18:08:34  INFO         matched                      1665011
+18:08:34  INFO         unmatched                    7714
+18:08:34  INFO         matched_percent              99.54
+18:08:34  INFO     [3/7] fire_weather: done in 98.5 s
+18:08:34  INFO     [4/7] landcover: running
+18:08:55  INFO         cells                        25704
+18:08:55  INFO         cells_with_landcover         25702
+18:08:55  INFO         fire_rows                    1665011
+18:08:55  INFO         fire_rows_without_landcover  0
+18:08:55  INFO     [4/7] landcover: done in 20.8 s
+18:08:55  INFO     [5/7] countries: running
+18:09:09  INFO         cells                        25704
+18:09:09  INFO         cells_in_study_area          16383
+18:09:09  INFO         cells_outside                9321
+18:09:09  INFO         coastal_nearest_country      177
+18:09:09  INFO         no_country                   2
+18:09:09  INFO         cells_CHN                    7240
+18:09:09  INFO         cells_MMR                    5787
+18:09:09  INFO         cells_THA                    4331
+18:09:09  INFO         cells_VNM                    2801
+18:09:09  INFO         cells_LAO                    1956
+18:09:09  INFO         cells_IND                    1758
+18:09:09  INFO         cells_KHM                    1508
+18:09:09  INFO         cells_MYS                    156
+18:09:09  INFO         cells_BGD                    147
+18:09:09  INFO         cells_IDN                    13
+18:09:09  INFO         cells_BTN                    5
+18:09:09  INFO     [5/7] countries: done in 14.3 s
+18:09:09  INFO     [6/7] dataset: running
+18:14:27  INFO         2020: 5,996,178 rows, 347,810 fire rows (5.8%), 1 schema problem(s), 55.1 s
+18:14:27  INFO               outside the study area: 9,321 cells, 3,411,486 rows removed (468 with fire)
+18:14:27  WARNING      2020 has schema problems - check it in notebooks/10_analysis_dataset.ipynb
+18:14:27  INFO         2021: 5,979,795 rows, 269,342 fire rows (4.5%), 1 schema problem(s), 53.3 s
+18:14:27  INFO               outside the study area: 9,321 cells, 3,402,165 rows removed (493 with fire)
+18:14:27  WARNING      2021 has schema problems - check it in notebooks/10_analysis_dataset.ipynb
+18:14:27  INFO         2022: 5,979,795 rows, 192,984 fire rows (3.23%), 0 schema problem(s), 52.1 s
+18:14:27  INFO               outside the study area: 9,321 cells, 3,402,165 rows removed (275 with fire)
+18:14:27  INFO         2023: 5,979,795 rows, 327,838 fire rows (5.48%), 1 schema problem(s), 51.7 s
+18:14:27  INFO               outside the study area: 9,321 cells, 3,402,165 rows removed (572 with fire)
+18:14:27  WARNING      2023 has schema problems - check it in notebooks/10_analysis_dataset.ipynb
+18:14:27  INFO         2024: 5,996,178 rows, 294,391 fire rows (4.91%), 0 schema problem(s), 51.6 s
+18:14:27  INFO               outside the study area: 9,321 cells, 3,411,486 rows removed (366 with fire)
+18:14:27  INFO         2025: 5,979,795 rows, 230,043 fire rows (3.85%), 0 schema problem(s), 52.1 s
+18:14:27  INFO               outside the study area: 9,321 cells, 3,402,165 rows removed (429 with fire)
+18:14:27  INFO         years                        6
+18:14:27  INFO         rows                         35911536
+18:14:27  INFO         fire_rows                    1662408
+18:14:27  INFO         schema_problems              3
+18:14:27  INFO     [6/7] dataset: done in 318.2 s
+18:14:27  INFO     [7/7] sample: running
+18:17:52  INFO         2020: 347,810 fire rows + 1,043,430 negatives (1,491,688 excluded by the buffer)
+18:17:52  INFO         2021: 269,342 fire rows + 808,026 negatives (1,388,379 excluded by the buffer)
+18:17:52  INFO         2022: 192,984 fire rows + 578,952 negatives (1,233,198 excluded by the buffer)
+18:17:52  INFO         2023: 327,838 fire rows + 983,514 negatives (1,464,888 excluded by the buffer)
+18:17:52  INFO         2024: 294,391 fire rows + 883,173 negatives (1,446,414 excluded by the buffer)
+18:17:52  INFO         2025: 230,043 fire rows + 690,129 negatives (1,267,358 excluded by the buffer)
+18:17:56  WARNING      sample: Column 'soil_moisture': 1 value(s) below minimum 0
+18:18:07  INFO         years                        6
+18:18:07  INFO         sample_rows                  6649632
+18:18:07  INFO         fire_rows                    1662408
+18:18:07  INFO         negatives_sampled            4987224
+18:18:07  INFO         excluded_near_fire           8291925
+18:18:07  INFO         problems                     1
+18:18:07  INFO     [7/7] sample: done in 219.3 s
+18:18:07  INFO     build finished in 671.1 s
+18:29:31  INFO     build started - log file: D:\Duanduhoche.Huy\wildfire-risk-analysis\logs\build_20261030.log
+18:29:31  INFO     [1/7] firms: skipped (output already exists)
+18:29:31  INFO     [2/7] weather: skipped (output already exists)
+18:29:31  INFO     [3/7] fire_weather: skipped (output already exists)
+18:29:31  INFO     [4/7] landcover: skipped (output already exists)
+18:29:31  INFO     [5/7] countries: skipped (output already exists)
+18:29:31  INFO     [6/7] dataset: running
+18:32:56  INFO         2020: 5,996,178 rows, 347,810 fire rows (5.8%), 0 schema problem(s), 35.2 s
+18:32:56  INFO               outside the study area: 9,321 cells, 3,411,486 rows removed (468 with fire)
+18:32:56  INFO         2021: 5,979,795 rows, 269,342 fire rows (4.5%), 0 schema problem(s), 33.3 s
+18:32:56  INFO               outside the study area: 9,321 cells, 3,402,165 rows removed (493 with fire)
+18:32:56  INFO         2022: 5,979,795 rows, 192,984 fire rows (3.23%), 0 schema problem(s), 33.7 s
+18:32:56  INFO               outside the study area: 9,321 cells, 3,402,165 rows removed (275 with fire)
+18:32:56  INFO         2023: 5,979,795 rows, 327,838 fire rows (5.48%), 0 schema problem(s), 33.7 s
+18:32:56  INFO               outside the study area: 9,321 cells, 3,402,165 rows removed (572 with fire)
+18:32:56  INFO         2024: 5,996,178 rows, 294,391 fire rows (4.91%), 0 schema problem(s), 33.6 s
+18:32:56  INFO               outside the study area: 9,321 cells, 3,411,486 rows removed (366 with fire)
+18:32:56  INFO         2025: 5,979,795 rows, 230,043 fire rows (3.85%), 0 schema problem(s), 33.4 s
+18:32:56  INFO               outside the study area: 9,321 cells, 3,402,165 rows removed (429 with fire)
+18:32:56  INFO         years                        6
+18:32:56  INFO         rows                         35911536
+18:32:56  INFO         fire_rows                    1662408
+18:32:56  INFO         schema_problems              0
+18:32:56  INFO     [6/7] dataset: done in 204.9 s
+18:32:56  INFO     [7/7] sample: running
+18:36:59  INFO         2020: 347,810 fire rows + 1,043,430 negatives (1,491,688 excluded by the buffer)
+18:36:59  INFO         2021: 269,342 fire rows + 808,026 negatives (1,388,379 excluded by the buffer)
+18:36:59  INFO         2022: 192,984 fire rows + 578,952 negatives (1,233,198 excluded by the buffer)
+18:36:59  INFO         2023: 327,838 fire rows + 983,514 negatives (1,464,888 excluded by the buffer)
+18:36:59  INFO         2024: 294,391 fire rows + 883,173 negatives (1,446,414 excluded by the buffer)
+18:36:59  INFO         2025: 230,043 fire rows + 690,129 negatives (1,267,358 excluded by the buffer)
+18:37:16  INFO         years                        6
+18:37:16  INFO         sample_rows                  6649632
+18:37:16  INFO         fire_rows                    1662408
+18:37:16  INFO         negatives_sampled            4987224
+18:37:16  INFO         excluded_near_fire           8291925
+18:37:16  INFO         problems                     0
+18:37:16  INFO     [7/7] sample: done in 260.2 s
+18:37:16  INFO     build finished in 465.0 s

@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 import config 
 import schema
-import worldcover_api
+from downloaders import worldcover_api
 
 GROUP_NAMES=list(schema.LAND_COVER_GROUPS.keys())
 

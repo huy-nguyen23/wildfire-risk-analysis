@@ -128,6 +128,9 @@ FIRMS_DUPLICATE_KEY = [
     "latitude", "longitude", "acq_datetime_utc", "satellite", "instrument",
 ]
 
+FIRMS_TYPE_MEANINGS = {0: "presumed vegetation fire", 1: "active volcano", 2: "other static land source", 3: "offshore"}
+FIRMS_FIRE_TYPES = [0]
+
 MODIS_CONFIDENCE_BINS = {"low": (0, 30), "nominal": (30, 80), "high": (80, 101)}
 VIIRS_CONFIDENCE_MAP = {"l": "low", "n": "nominal", "h": "high"}
 
@@ -153,6 +156,7 @@ PROCESSED_FILES = {
     "weather_daily": PROCESSED_DIR / "weather_daily.parquet",
     "fire_weather": PROCESSED_DIR / "fire_weather.parquet",
     "landcover_cells": PROCESSED_DIR / "landcover_cells.parquet",
+    "cell_countries": PROCESSED_DIR / "cell_countries.parquet",
     "fire_weather_landcover": PROCESSED_DIR / "fire_weather_landcover.parquet",
     "analysis_dataset": PROCESSED_DIR / "analysis_dataset",   
     "training_sample": PROCESSED_DIR / "training_sample.parquet",
@@ -162,3 +166,4 @@ NEGATIVE_RATIO=3
 BUFFER_CELLS=1
 BUFFER_DAYS=1
 RANDOM_SEED=42
+COASTAL_MAX_DISTANCE_KM=15

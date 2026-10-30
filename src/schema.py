@@ -211,6 +211,8 @@ SCHEMA = {
 
 REQUIRED_NOT_NULL = ["grid_id", "date", "latitude", "longitude", "fire"]
     
+RANGE_TOLERANCE = 1e-9   
+    
 def resolution_facts(lat=18.0):
     """Report how far apart the three sources' resolutions really are.  
 
@@ -363,11 +365,11 @@ def validate_schema(df, strict=False, verbose=True):
         numbers = pd.to_numeric(df[column], errors="coerce")
 
         if lowest is not None:
-            n_too_low = int((numbers < lowest).sum())
+            n_too_low = int((numbers < lowest - RANGE_TOLERANCE).sum())
             if n_too_low > 0:
                 problems.append(f"Column '{column}': {n_too_low} value(s) below minimum {lowest}")
         if highest is not None:
-            n_too_high = int((numbers > highest).sum())
+            n_too_high = int((numbers > highest + RANGE_TOLERANCE).sum())
             if n_too_high > 0:
                 problems.append(f"Column '{column}': {n_too_high} value(s) above maximum {highest}")
 
@@ -385,7 +387,16 @@ def validate_schema(df, strict=False, verbose=True):
         if column not in df.columns:
             has_all = False
     if has_all:
-        total = df[percent_columns].sum(axis=1)
+        # Cells the land cover map barely covers have all four values empty
+        # ON PURPOSE (see landcover_join). Only rows with values are checked;
+        # a row with SOME values empty is still a problem.
+        n_filled = df[percent_columns].notna().sum(axis=1)
+        partly_empty = (n_filled > 0) & (n_filled < len(percent_columns))
+        if partly_empty.sum() > 0:
+            problems.append(f"{int(partly_empty.sum())} row(s) with only some land-cover percentages filled")
+
+        complete = n_filled == len(percent_columns)
+        total = df.loc[complete, percent_columns].sum(axis=1)
         # allow 1 percentage point for rounding
         n_bad = int(((total - 100).abs() > 1.0).sum())
         if n_bad > 0:

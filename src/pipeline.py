@@ -10,9 +10,9 @@ from config import LOG_DIR,MANIFEST_PATH,RAW_SUBDIRS,RETRY_BASE_DELAY_S,RETRY_MA
 
 log=logging.getLogger(__name__)
 
-def setup_logging(level="INFO",log_dir=LOG_DIR,quiet_console=False):
+def setup_logging(level="INFO",log_dir=LOG_DIR,quiet_console=False,name="download"):
     log_dir.mkdir(parents=True, exist_ok=True)
-    log_file = log_dir / f"download_{datetime.now():%Y%m%d}.log"
+    log_file = log_dir / f"{name}_{datetime.now():%Y%m%d}.log"
 
     logger = logging.getLogger()
     logger.setLevel(getattr(logging, level.upper()))

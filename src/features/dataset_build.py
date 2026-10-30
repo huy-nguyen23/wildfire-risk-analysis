@@ -4,7 +4,7 @@ import config
 import schema
 import time
 import gc
-import feature_engineering
+from features import feature_engineering
 
 def component_paths(processed_dir=None):
     if processed_dir is None:
@@ -35,6 +35,14 @@ def load_landcover_and_fires(processed_dir=None):
     check_exists(fire_path, "Fire table")
     return pd.read_parquet(landcover_path), pd.read_parquet(fire_path)
 
+def load_cell_countries(processed_dir=None):
+    if processed_dir is None:
+        path = config.PROCESSED_FILES["cell_countries"]
+    else:
+        path = Path(processed_dir) / "cell_countries.parquet"
+    check_exists(path, "Cell country table")
+    return pd.read_parquet(path)
+    
 def load_clean_components(processed_dir=None,year=None,verbose=True):
     weather_df = load_weather(year, processed_dir)
     landcover_df, fire_df = load_landcover_and_fires(processed_dir)
@@ -46,7 +54,7 @@ def load_clean_components(processed_dir=None,year=None,verbose=True):
 
     return weather_df, landcover_df, fire_df
 
-def build_analysis_panel(weather_df,landcover_df,fire_df,verbose=True):
+def build_analysis_panel(weather_df,landcover_df,fire_df,cell_countries=None,verbose=True):
     lc_columns = [
         "grid_id",
         "land_cover_dominant",
@@ -61,7 +69,9 @@ def build_analysis_panel(weather_df,landcover_df,fire_df,verbose=True):
 
     panel = weather_df.merge(lc_clean, on="grid_id", how="left")
 
-    fire_summary_cols = ["grid_id", "date", "fire", "hotspot_count", "frp_max", "frp_sum", "country"]
+    fire_summary_cols = ["grid_id", "date", "fire", "hotspot_count", "frp_max", "frp_sum"]
+    if cell_countries is None:
+        fire_summary_cols.append("country")
     available_fire_cols = [c for c in fire_summary_cols if c in fire_df.columns]
     fire_summary = fire_df[available_fire_cols].drop_duplicates(subset=["grid_id", "date"])
 
@@ -72,7 +82,10 @@ def build_analysis_panel(weather_df,landcover_df,fire_df,verbose=True):
     panel["frp_max"] = panel["frp_max"].fillna(0.0).astype("float64")
     panel["frp_sum"] = panel["frp_sum"].fillna(0.0).astype("float64")
 
-    if "country" in panel.columns and "country" in fire_df.columns:
+    if cell_countries is not None:
+        panel = panel.merge(cell_countries[["grid_id", "country", "in_study_area"]], on="grid_id", how="left")
+        panel["in_study_area"] = panel["in_study_area"].fillna(0).astype("int64")
+    elif "country" in panel.columns and "country" in fire_df.columns:
         cell_to_country = fire_df.groupby("grid_id")["country"].first().to_dict()
         panel["country"] = panel["country"].fillna(panel["grid_id"].map(cell_to_country))
 
@@ -98,6 +111,27 @@ def build_analysis_panel(weather_df,landcover_df,fire_df,verbose=True):
         print(f"  Non-fire days (fire = 0): {n_no_fire:,} ({100 - fire_rate:.2f}%)")
 
     return panel
+
+def keep_study_area(panel,verbose=True):
+    if "in_study_area" not in panel.columns:
+        raise ValueError("Column 'in_study_area' is missing. Pass cell_countries to build_analysis_panel().")
+
+    inside = panel["in_study_area"] == 1
+    outside = panel[~inside]
+    report = {
+        "rows_removed": len(outside),
+        "cells_removed": outside["grid_id"].nunique(),
+        "fire_rows_removed": int(outside["fire"].sum()),
+    }
+
+    result = panel[inside].drop(columns=["in_study_area"]).reset_index(drop=True)
+
+    if verbose:
+        print(f"Study area: kept {result['grid_id'].nunique():,} cells ({len(result):,} rows); "
+              f"removed {report['cells_removed']:,} cells outside the study countries "
+              f"({report['rows_removed']:,} rows, {report['fire_rows_removed']:,} of them with fire)")
+
+    return result, report
     
 def validate_analysis_dataset(df,verbose=True):
     pk_duplicates = schema.check_primary_key(df, verbose=False)
@@ -152,25 +186,28 @@ def load_analysis_dataset(years=None,columns=None,folder=None):
 
     return pd.concat(tables, ignore_index=True)
     
-def build_year(year,landcover_df,fire_df,processed_dir=None,verbose=True):
+def build_year(year,landcover_df,fire_df,cell_countries,processed_dir=None,verbose=True):
     weather_df = load_weather(year, processed_dir)
     if len(weather_df) == 0:
         raise ValueError(f"The weather table has no rows for {year}. Check config.PROCESSING_YEARS.")
 
-    panel = build_analysis_panel(weather_df, landcover_df, fire_df, verbose=verbose)
+    panel = build_analysis_panel(weather_df, landcover_df, fire_df, cell_countries, verbose=verbose)
     del weather_df
+
+    panel, area_report = keep_study_area(panel, verbose=verbose)
 
     dataset = feature_engineering.add_engineered_features(panel, verbose=False)
     del panel
 
     problems = validate_analysis_dataset(dataset, verbose=verbose)
-    return dataset, problems
+    return dataset, problems, area_report
     
 def build_all_years(years=None,processed_dir=None,save=True,verbose=True):
     if years is None:
         years = config.PROCESSING_YEARS
 
     landcover_df, fire_df = load_landcover_and_fires(processed_dir)
+    cell_countries = load_cell_countries(processed_dir)
 
     report_rows = []
     for year in years:
@@ -178,7 +215,8 @@ def build_all_years(years=None,processed_dir=None,save=True,verbose=True):
         if verbose:
             print(f"--- {year} ---")
 
-        dataset, problems = build_year(year, landcover_df, fire_df, processed_dir, verbose=verbose)
+        dataset, problems, area_report = build_year(year, landcover_df, fire_df, cell_countries,
+                                                    processed_dir, verbose=verbose)
         if save:
             save_analysis_dataset(dataset, year, verbose=verbose)
 
@@ -189,6 +227,9 @@ def build_all_years(years=None,processed_dir=None,save=True,verbose=True):
             "grid_cells": dataset["grid_id"].nunique(),
             "fire_rows": n_fire,
             "fire_rate_pct": round(n_fire / len(dataset) * 100, 2),
+            "cells_removed": area_report["cells_removed"],
+            "rows_removed": area_report["rows_removed"],
+            "fire_rows_removed": area_report["fire_rows_removed"],
             "schema_problems": len(problems),
             "seconds": round(time.time() - start, 1),
         })
