@@ -180,6 +180,7 @@ def download_era5(variables,area,year,month,day,hours=None,use_cache=True,verbos
     hours=hours or ALL_HOURS
     
     cache_file = _cache_path(variables, area, year, month, day,folder,region_name=region_name)
+    cache_file.parent.mkdir(parents=True, exist_ok=True)
     if use_cache and cache_file.exists():
         if verbose:
             print(f"[cache] Reading {cache_file.name}")
@@ -217,7 +218,7 @@ def download_era5(variables,area,year,month,day,hours=None,use_cache=True,verbos
 
     return xr.open_dataset(cache_file)
 
-def download_era5_month(variables,area,year,month,hours=None,use_cache=None,verbose=True,folder=None,region_name=None):
+def download_era5_month(variables,area,year,month,hours=None,use_cache=True,verbose=True,folder=None,region_name=None):
     variables = _validate_variables(variables)
     _validate_area(area)
     _validate_date(year, month, 1)

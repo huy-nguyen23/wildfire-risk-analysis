@@ -335,6 +335,8 @@ def clean_firms(df,countries=None,borders=None,verbose=True):
 
     result, invalid_report = filter_invalid(result, verbose=verbose)
     report["invalid_removed"] = int(invalid_report["rows_removed"].sum())
+    result, type_report = keep_vegetation_fires(result, verbose=verbose)
+    report["non_vegetation_removed"] = int(type_report["rows_removed"].sum())
 
     result = normalize_confidence(result, verbose=verbose)
 

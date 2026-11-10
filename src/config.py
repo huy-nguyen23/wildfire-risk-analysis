@@ -148,6 +148,9 @@ RETRY_BASE_DELAY_S = 1.0
 BOUNDARIES_URL = "https://naciscdn.org/naturalearth/50m/cultural/ne_50m_admin_0_countries.zip"
 BOUNDARIES_PATH = RAW_DIR / "boundaries" / "ne_50m_admin_0_countries.zip"
 
+PROVINCES_URL = "https://naciscdn.org/naturalearth/10m/cultural/ne_10m_admin_1_states_provinces.zip"
+PROVINCES_PATH = RAW_DIR / "boundaries" / "ne_10m_admin_1_states_provinces.zip"
+
 PROCESSING_REGION="southeast_asia"
 PROCESSING_YEARS=[2020,2021,2022,2023,2024,2025]
 

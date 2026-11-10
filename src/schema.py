@@ -13,7 +13,6 @@ LAND_COVER_GROUPS = {
 }
 
 SCHEMA = {
-    # --- Keys and location -------------------------------------------------
     "grid_id": {
         "dtype": "object",
         "unit": None,
@@ -26,7 +25,7 @@ SCHEMA = {
         "dtype": "datetime64[ns]",
         "unit": None,
         "source": "derived",
-        "aggregation": "calendar day in UTC (project-wide convention, Session 3)",
+        "aggregation": "calendar day in UTC (project-wide convention)",
         "valid_range": None,
         "description": "The day this row describes",
     },
@@ -50,7 +49,7 @@ SCHEMA = {
         "dtype": "object",
         "unit": None,
         "source": "derived",
-        "aggregation": "country containing the cell centre (Session 7)",
+        "aggregation": "country containing the cell centre",
         "valid_range": None,
         "description": "ISO-3 country code, e.g. 'THA'",
     },
@@ -71,14 +70,13 @@ SCHEMA = {
         "description": "Calendar month, for seasonal analysis",
     },
 
-    # --- Fire: the label and its descriptors (NASA FIRMS) ------------------
     "fire": {
         "dtype": "int64",
         "unit": None,
         "source": "FIRMS",
         "aggregation": "1 if any hotspot was detected in this cell on this day, else 0",
         "valid_range": (0, 1),
-        "description": "LABEL for the classification model (Session 18)",
+        "description": "LABEL for the classification model",
     },
     "hotspot_count": {
         "dtype": "int64",
@@ -105,7 +103,6 @@ SCHEMA = {
         "description": "Total radiative power - scales with both size and intensity",
     },
     
-    # --- Weather (ERA5-Land) ----------------------------------------------
     "temp_max_c": {
         "dtype": "float64",
         "unit": "degrees Celsius",
@@ -126,7 +123,7 @@ SCHEMA = {
         "dtype": "float64",
         "unit": "mm",
         "source": "ERA5-Land",
-        "aggregation": "accumulated value at 23:00 UTC, converted from metres (Session 3)",
+        "aggregation": "accumulated daily total, converted from metres",
         "valid_range": (0, None),
         "description": "Total precipitation that day",
     },
@@ -162,11 +159,6 @@ SCHEMA = {
         "valid_range": (0, 1),
         "description": "Surface soil water content - already a ratio, no conversion",
     },
-    
-    # --- Land cover (ESA WorldCover) ---------------------------------------
-    # NOTE: WorldCover has no time dimension. The 2021 map is joined to every
-    # date from 2020-2025, i.e. we assume land cover did not change over the
-    # study period. That assumption belongs in the Limitations section.
     "land_cover_dominant": {
         "dtype": "object",
         "unit": None,

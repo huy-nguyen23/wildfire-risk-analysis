@@ -144,7 +144,7 @@ def estimate_era5(bboxes,start,end,n_variables=5,grid_deg=0.1,minutes_per_reques
     }
     
 def estimate_worldcover(bboxes,tile_size_deg=3,mb_per_tile=44):
-    import worldcover_api
+    from downloaders import worldcover_api
 
     tiles = set()   # a set ignores tiles I already counted
     for bbox in bboxes:
@@ -202,7 +202,7 @@ def create_manifest(manifest_path=MANIFEST_PATH):
             writer = csv.writer(file)
             writer.writerow(MANIFEST_COLUMNS)
             
-def  record_download(source,key,path=None,status="OK",message="",manifest_path=MANIFEST_PATH):
+def  record_download(source,key,path=None,status="ok",message="",manifest_path=MANIFEST_PATH):
     create_manifest(manifest_path)
 
     size = 0
